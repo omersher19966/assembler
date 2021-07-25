@@ -148,7 +148,7 @@
     int     convert_to_register(char *operand);
     int     add_instruction_to_code_image (instruction *instruction_ptr);
     int     add_to_data_image(long num, int jmp);
-    int     set_operands_list(char *line, char *operands_list, reqOperands operands_num);
+    int     set_operands_list(char *line, char **operands_list, reqOperands operands_num);
     int     create_output_files(char *file_name, int icf, int dcf);
     int     create_entry_file(char *file_name);
     int     create_external_file(char *file_name);

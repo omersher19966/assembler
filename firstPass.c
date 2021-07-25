@@ -8,81 +8,87 @@ void assembler_first_pass(FILE *fp) {
 	bool is_label;
 	int error_code = OK;
 	
-	while(fgets(line, MAX_LINE, fp) != NULL) { /* global_error_flag == false */
-		
-		lc++;
-		is_label = false;
-		word = NULL;
-		error_code = OK;
+	if(line) {
 
-		if((error_code = check_line(line)) != OK) {
-			if(error_code != COMMENT_LINE || error_code == EMPTY_LINE) {
-				if (error_code == ABOVE_MAX_LINE) {
-					start_new_line(fp);
-				}
-				print_error(error_code);
-			}
-		}
-		else {
+		while(fgets(line, MAX_LINE, fp) != NULL && global_memory_flag == false) { /* global_error_flag == false */
 			
-			word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
-
-			if((error_code = check_label(word, true) != NOT_A_LABEL)) { /* skips in case first word is a label. */
-				if(!is_error(error_code)) {
-					is_label = true;					}
-				else {
-					print_error(error_code);
-				}
-				label = word;
-				word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
-			} 
-			
+			lc++;
+			is_label = false;
+			word = NULL;
 			error_code = OK;
 
-			if(is_guidance_word(word)) {
-				if(is_label) {
-					error_code = (!(is_symbol_exist(label))) ? OK : SYMBOL_EXISTS_IN_TABLE;
-					if(!is_error(error_code)) {
-						add_symbol_to_table(label, false, true, false, false);
+			if((error_code = check_line(line)) != OK) {
+				if(error_code != COMMENT_LINE || error_code == EMPTY_LINE) {
+					if (error_code == ABOVE_MAX_LINE) {
+						start_new_line(fp);
 					}
-					else {
-						print_error(error_code);
-					}
-				}
-				error_code = parse_guidance_sentence(line, word);
-				if(is_error(error_code)){
 					print_error(error_code);
 				}
-			}
-			else if(is_entry_word(word)){
-				continue;
-			}
-			else if(is_extern_word(word)){
-				error_code = parse_extern_sentence(line);
-				if (is_error(error_code)) {
-					print_error(error_code);
-				}
-			}
-			else if(is_command_word(word)) {
-				if(is_label) {
-					error_code = (!(is_symbol_exist(label))) ? OK : SYMBOL_EXISTS_IN_TABLE;
-					if(!is_error(error_code)) {
-						add_symbol_to_table(label, true, false, false, false);
-					}
-					else {
-						print_error(error_code);
-					}
-				}
-				error_code = parse_command_sentence(line, word);
-				if (is_error(error_code)) {
-					print_error(error_code);
-				}
-				
 			}
 			else {
-				print_error(error_code = INVALID_CMD);
+				
+				word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
+
+				if((error_code = check_label(word, true) != NOT_A_LABEL)) { /* skips in case first word is a label. */
+					if(!is_error(error_code)) {
+						is_label = true;					}
+					else {
+						print_error(error_code);
+					}
+					label = word;
+					word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
+				} 
+				
+				error_code = OK;
+
+				if(is_guidance_word(word)) {
+					if(is_label) {
+						error_code = (!(is_symbol_exist(label))) ? OK : SYMBOL_EXISTS_IN_TABLE;
+						if(!is_error(error_code)) {
+							add_symbol_to_table(label, false, true, false, false);
+						}
+						else {
+							print_error(error_code);
+						}
+					}
+					error_code = parse_guidance_sentence(line, word);
+					if(is_error(error_code)){
+						print_error(error_code);
+					}
+				}
+				else if(is_entry_word(word)){
+					continue;
+				}
+				else if(is_extern_word(word)){
+					error_code = parse_extern_sentence(line);
+					if (is_error(error_code)) {
+						print_error(error_code);
+					}
+				}
+				else if(is_command_word(word)) {
+					if(is_label) {
+						error_code = (!(is_symbol_exist(label))) ? OK : SYMBOL_EXISTS_IN_TABLE;
+						if(!is_error(error_code)) {
+							add_symbol_to_table(label, true, false, false, false);
+						}
+						else {
+							print_error(error_code);
+						}
+					}
+					error_code = parse_command_sentence(line, word);
+					if (is_error(error_code)) {
+						print_error(error_code);
+					}
+					
+				}
+				else {
+					print_error(error_code = INVALID_CMD);
+				}
 			}
 		}
+	}
+	else {
+		print_error(MEMORY_ALLOCATION_FAILED);
 	}
 
 	return;	
@@ -206,7 +212,7 @@ int parse_guidance_sentence(char *line, char *word) {
 
 int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num) {
 	char *operands_list[operands_num];
-	int error_code = OK, i, registers[operands_num], *current_register;
+	int error_code = OK, i, registers[operands_num];
 
 	error_code = set_operands_list(line, operands_list, operands_num);
 	
@@ -214,6 +220,7 @@ int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char 
 		for(i = 0; i < operands_num && !is_error(error_code); i++) {
 			error_code = check_register(operands_list[i]);
 			if (!is_error(error_code)) {
+				operands_list[i]++;
 				registers[i] = convert_to_register(operands_list[i]);
 			}	
 		}
@@ -245,8 +252,8 @@ int parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char 
 			if(is_error(error_code = check_register(operands_list[FIRST_OPERAND])) || is_error(error_code = check_register(operands_list[THIRD_OPERAND]))) {
 				return error_code;
 			}
-			registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]);
-			registers[i++] = convert_to_register(operands_list[THIRD_OPERAND]);
+			registers[i++] = convert_to_register(++operands_list[FIRST_OPERAND]); /* skipping the dolar sign by using ++ */
+			registers[i++] = convert_to_register(++operands_list[THIRD_OPERAND]);
 			
 			if(is_valid_number(operands_list[SECOND_OPERAND])) {
 				immed = atoi(operands_list[SECOND_OPERAND]);

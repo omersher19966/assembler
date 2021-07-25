@@ -173,9 +173,9 @@ void skip_spaces(char **word) {
 /* ---------------------------------------- */
 
 bool is_assembly_key_word(char *word) {
-	char **keyword; 
-	for(keyword = assembly_keywords; *keyword != NULL; keyword++) {
-		if(are_strings_equal(keyword, word)) {
+	 char **keyword; 
+	for(keyword = (char **)assembly_keywords; *keyword != NULL; keyword++) {
+		if(are_strings_equal(*keyword, word)) {
 			return true;
 		}
 	}

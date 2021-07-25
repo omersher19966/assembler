@@ -398,7 +398,7 @@ int add_to_data_image(long num, int jmp) {
 
 /* ---------------------------------------- */
 
-int set_operands_list(char *line, char *operands_ptr, reqOperands operands_num) {
+int set_operands_list(char *line, char **operands_ptr, reqOperands operands_num) {
 	
 	int i, error_code = OK;
 	

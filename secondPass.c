@@ -20,7 +20,7 @@ void assembler_second_pass(FILE *fp) {
             lc++;
 			word = NULL;
 
-			if(!is_error(error_code = check_line(line))) {
+			if(is_error(error_code = check_line(line))) {
 				if(error_code == MEMORY_ALLOCATION_FAILED) {
 					print_error(error_code);
 				}
@@ -42,7 +42,7 @@ void assembler_second_pass(FILE *fp) {
 						}
 					}
 					else { /* command_sentence */
-						if(!is_error(error_code = complete_command_data(line, word))) {
+						if(is_error(error_code = complete_command_data(line, word))) {
 							print_error(error_code);
 						} 
 					}
