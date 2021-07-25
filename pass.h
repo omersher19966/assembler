@@ -12,8 +12,8 @@
     #define SECOND_OPERAND 1
     #define THIRD_OPERAND 2
 
-    #define EXTERN_DECLARATION  ".entry"
-    #define ENTRY_DECLARATION   ".extern"
+    #define EXTERN_DECLARATION  ".extern"
+    #define ENTRY_DECLARATION   ".entry"
 
     #define DB ".db"
     #define DH ".dh"

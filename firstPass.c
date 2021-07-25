@@ -18,7 +18,7 @@ void assembler_first_pass(FILE *fp) {
 			error_code = OK;
 
 			if((error_code = check_line(line)) != OK) {
-				if(error_code != COMMENT_LINE || error_code == EMPTY_LINE) {
+				if(error_code != COMMENT_LINE && error_code != EMPTY_LINE) {
 					if (error_code == ABOVE_MAX_LINE) {
 						start_new_line(fp);
 					}
@@ -29,7 +29,7 @@ void assembler_first_pass(FILE *fp) {
 				
 				word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
 
-				if((error_code = check_label(word, true) != NOT_A_LABEL)) { /* skips in case first word is a label. */
+				if((error_code = check_label(word, true, true)) != NOT_A_LABEL) { /* skips in case first word is a label. */
 					if(!is_error(error_code)) {
 						is_label = true;					}
 					else {
@@ -104,7 +104,7 @@ int parse_extern_sentence(char *line) {
 
 	if((error_code = check_operands_num(line, operands_num)) == OK) {
 		element = get_next_element(&line, COMMA_DELIMETER_STR);
-		if((error_code = check_label(element, false)) == OK) {
+		if((error_code = check_label(element, false, false)) == OK) {
 			if ((symbol = get_symbol_from_table(element)) == NULL) {
 				add_symbol_to_table(element, false, true, false, true);
 			}
@@ -253,7 +253,7 @@ int parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char 
 				return error_code;
 			}
 			registers[i++] = convert_to_register(++operands_list[FIRST_OPERAND]); /* skipping the dolar sign by using ++ */
-			registers[i++] = convert_to_register(++operands_list[THIRD_OPERAND]);
+			registers[i++] = convert_to_register(++operands_list[THIRD_OPERAND]); /* skipping the dolar sign by using ++ */
 			
 			if(is_valid_number(operands_list[SECOND_OPERAND])) {
 				immed = atoi(operands_list[SECOND_OPERAND]);
@@ -274,7 +274,7 @@ int parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char 
 			registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]);
 			registers[i++] = convert_to_register(operands_list[SECOND_OPERAND]);
 		
-			if(is_error(error_code = check_label(operands_list[THIRD_OPERAND], false))) {
+			if(is_error(error_code = check_label(operands_list[THIRD_OPERAND], false, false))) {
 				return error_code;
 			}
 
@@ -298,7 +298,7 @@ int parse_j_instruction(instruction *instruction_ptr,command *command_ptr, char 
 	if(current_instruction_group != STOP) {
 		operand = get_next_element(&line, COMMA_DELIMETER_STR);
 		if(current_instruction_group == JMP) {
-			if(!is_error(check_label(operand, false))) {
+			if(!is_error(check_label(operand, false, false))) {
 				set_jmp_instruction(instruction_ptr, command_ptr, reg ,false);
 			}
 			else if(!is_error(check_register(operand))){
@@ -310,7 +310,7 @@ int parse_j_instruction(instruction *instruction_ptr,command *command_ptr, char 
 			}	
 		}
 		else {
-			if(!is_error(error_code = check_label(operand, false))) {
+			if(!is_error(error_code = check_label(operand, false, false))) {
 				if(current_instruction_group == LA)
 					set_la_instruction(instruction_ptr, command_ptr);
 				else {

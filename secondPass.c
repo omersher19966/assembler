@@ -31,13 +31,13 @@ void assembler_second_pass(FILE *fp) {
 			else {
 				word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
 				
-				if(!is_error(check_label(word, true))) { /* skips in case first word is a label. */
+				if(!is_error(check_label(word, true, false))) { /* skips in case first word is a label. */
 					word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
 				}
 				
 				if(!(is_guidance_word(word) || is_extern_word(word))) {
 					if(is_entry_word(word)){
-						if(!is_error(error_code = parse_entry_sentence(line))) {
+						if(is_error(error_code = parse_entry_sentence(line))) {
 							print_error(error_code);
 						}
 					}
@@ -62,8 +62,8 @@ int parse_entry_sentence(char *line) {
 
 	if(!is_error(error_code = check_operands_num(line, ONE_OPERAND))) {
         operand = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
-		if(!is_error(error_code = check_label(operand, false))) {
-			if(symbol = get_symbol_from_table(operand) != NULL) {
+		if(!is_error(error_code = check_label(operand, false, false))) {
+			if((symbol = get_symbol_from_table(operand)) != NULL) {
 				if(symbol->attributes.external) {
 					error_code = SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL;
 				}
@@ -114,11 +114,11 @@ int complete_command_data(char *line, char *word) {
 			}
 			if(instruction_group == JMP) {
 				if(!(code_image[code_image_index].instruction_fmt.instruction_j.reg)) {
-					code_image[code_image_index].value = symbol->value;
+					code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;
 				}
 			}	
 			else {
-				code_image[code_image_index].value = symbol->value;
+				code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;
 			}	
 		}
 		else{
@@ -137,16 +137,18 @@ int add_symbol_to_external_list(symbolPtr symbol, int address) {
 	externalNodePtr head = ext_head;
 	externalNodePtr new_ext_node_ptr = (externalNodePtr)malloc(sizeof(externalNode)), current_ext_node_ptr;
 
-	if(new_ext_node_ptr){
+	new_ext_node_ptr->symbol_name = (char *)malloc(strlen(symbol->name));
+	
+	if(new_ext_node_ptr && new_ext_node_ptr->symbol_name ){
 		strcpy(new_ext_node_ptr->symbol_name, symbol->name);
 		new_ext_node_ptr->address = address;
 		new_ext_node_ptr->next = NULL;
 		
 		if(head == NULL) {
-			head = new_ext_node_ptr;
+			ext_head = new_ext_node_ptr;
 		}
 		else {
-			current_ext_node_ptr = head;
+			current_ext_node_ptr = ext_head;
 			while(current_ext_node_ptr->next != NULL) {
 				current_ext_node_ptr = current_ext_node_ptr -> next;
 			}
@@ -166,16 +168,18 @@ int add_symbol_to_entry_list(symbolPtr symbol) {
 	entryNodePtr head = ent_head;
 	entryNodePtr new_ent_node_ptr = (entryNodePtr)malloc(sizeof(entryNode)), current_ent_node_ptr;
 
-	if(new_ent_node_ptr){
+	new_ent_node_ptr->symbol_name = (char *)malloc(strlen(symbol->name));
+
+	if(new_ent_node_ptr && new_ent_node_ptr->symbol_name){
 		strcpy(new_ent_node_ptr->symbol_name, symbol->name);
 		new_ent_node_ptr->address = symbol->value;
 		new_ent_node_ptr->next = NULL;
 		
 		if(head == NULL) {
-			head = new_ent_node_ptr;
+			ent_head = new_ent_node_ptr;
 		}
 		else {
-			current_ent_node_ptr = head;
+			current_ent_node_ptr = ent_head;
 			while(current_ent_node_ptr->next != NULL) {
 				current_ent_node_ptr = current_ent_node_ptr -> next;
 			}

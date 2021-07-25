@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "assemblerdata.h": "c"
+        "assemblerdata.h": "c",
+        "pass.h": "c",
+        "symbol.h": "c"
     }
 }

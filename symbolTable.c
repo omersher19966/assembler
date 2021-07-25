@@ -4,17 +4,23 @@ symbolPtr root;
 
 /* ---------------------------------------- */
 
-int check_label(char *word, bool check_new_label) {
+int check_label(char *word, bool check_new_label, bool check_symbol_table) {
 	int error_code = OK;
 	
-	if((check_new_label) && (!is_new_label(word))) {
-		error_code = NOT_A_LABEL;
+	if (check_new_label && (!is_new_label(word))) {
+			error_code = NOT_A_LABEL;
 	}
-	else if (!is_valid_label(word)) {
-		error_code =  INVALID_LABEL;
+
+	if(!is_error(error_code)) {
+		if (!is_valid_label(word)){
+			error_code = INVALID_LABEL;
+		}
 	}
-	else if (is_symbol_exist(word)){
-		error_code = LABEL_HAS_ALREADY_BEEN_USED;
+	
+	if ((check_symbol_table) && (!is_error(error_code))) {
+		if (is_symbol_exist(word)){
+			error_code = LABEL_HAS_ALREADY_BEEN_USED;
+		}
 	}
 	
 	return error_code;
@@ -104,7 +110,7 @@ symbolPtr get_symbol_from_table(char *symbol_name) {
 
 /* ---------------------------------------- */
 
-void add_symbol_to_table(char *symbol_name, bool data, bool code, bool entry, bool external) {
+void add_symbol_to_table(char *symbol_name, bool code, bool data, bool entry, bool external) {
 	
 	symbolPtr new_symbol = create_new_symbol(symbol_name, data, code, entry, external); /* need to handle malloc */
 	symbolPtr current_symbol;
@@ -142,7 +148,7 @@ void add_symbol_to_table(char *symbol_name, bool data, bool code, bool entry, bo
 
 
 /* ---------------------------------------- */
-
+/* need to handle malloc */
 symbolPtr create_new_symbol(char *symbol_name, bool data, bool code, bool entry, bool external) {
 	
 	symbolPtr new_symbol = (symbolPtr)malloc(sizeof(symbolNode));

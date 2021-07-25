@@ -434,11 +434,11 @@ int check_line(char *line) {
 		else if (!is_valid_operands_line(line)) {
 			error_code=  INVALID_OPERANDS_LINE;
 		}
-		else if(is_comment(element)) {
-			error_code = COMMENT_LINE;
-		}
 		else if(element == NULL) {
 			error_code = EMPTY_LINE;
+		}
+		else if(is_comment(element)) {
+			error_code = COMMENT_LINE;
 		}
 	}
 	free(copied_line);
