@@ -58,7 +58,7 @@ const guidanceCommand guidance_cmd[] = {
 /*Declarations of static functions */
 
 static unsigned long get_required_bits(int bytes);
-
+static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp);
 
 
 /* ---------------------------------------- */
@@ -140,7 +140,7 @@ void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 		
 		fprintf(object_file, "%04d", address);
 		bytes_to_print = MACHINE_INSTRUCTIONS_SIZE;
-		num = temp = EMPTY;
+		num = EMPTY;
 
 		while(bytes_to_print != EMPTY && index < data_image_index) {
 			
@@ -176,14 +176,18 @@ void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 
 		}
 
-		ptr = (char *)&num;
-		while(bytes_to_print < MACHINE_INSTRUCTIONS_SIZE) {
+		for(ptr = (char *)&num; bytes_to_print < MACHINE_INSTRUCTIONS_SIZE; bytes_to_print++) {
 			fprintf(object_file, " %02X", *ptr++);
-			bytes_to_print++;
 		}
-		fprintf(object_file, "\n");
-		
+
+		fprintf(object_file, "\n");	
 	}
+	/* in case temp still contains data - print the rest */
+	if(available_bytes != EMPTY){
+		print_the_rest(object_file, available_bytes, address+address_jmp, temp);
+	}
+	
+
 }
 
 /* used by print_to_data_image only */
@@ -202,7 +206,14 @@ static unsigned long get_required_bits(int bytes) {
 	return required_bits;
 }
 
-
+/* used by print_to_data_image only */
+static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp) {
+	char *ptr;
+	fprintf(object_file, "%04d", address);
+	for(ptr = (char *) &temp; available_bytes != EMPTY; available_bytes--) {
+		fprintf(object_file, " %02X", *ptr++);
+	}
+}
 /* ---------------------------------------- */
 
 void free_entry_list() {
