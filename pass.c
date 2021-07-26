@@ -348,7 +348,7 @@ bool is_valid_asciz_line(char *line) {
 /* ---------------------------------------- */
 
 int convert_to_register(char *operand) {
-	return atoi(operand);
+	return atoi(++operand);/*increasing operand for skipping the reg sing - $ */
 }
 
 /* ---------------------------------------- */
@@ -451,11 +451,11 @@ int check_operands_num(char *line, reqOperands operands_num) {
 	int error_code = OK, elements_amount;
 	if (operands_num != NOT_CONSTANT) {
 		elements_amount = get_num_of_elements(line,COMMA_DELIMETER_STR);
-		if(!elements_amount){
-			error_code = NO_GIVEN_OPERANDS;
-		}
-		else if(elements_amount == operands_num) {
+		if(elements_amount == operands_num) {
 			error_code = OK;
+		}
+		else if(!elements_amount){
+			error_code = NO_GIVEN_OPERANDS;
 		}
 		else if(elements_amount > operands_num) {
 			error_code = GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED;

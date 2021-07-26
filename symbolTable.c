@@ -54,7 +54,7 @@ bool is_valid_label(char *word) {
 	}
 	else {
 		if (isalpha(word[i++])) {
-			while((isalnum(word[i++])) && (i < current_label_length))
+			for(;(isalnum(word[i])) && (i < current_label_length);i++)
 			;
 			if(i == current_label_length) {
 				valid_label_flag = true;
@@ -94,7 +94,7 @@ bool is_symbol_exist(char *symbol_name) {
 symbolPtr get_symbol_from_table(char *symbol_name) {
 	symbolPtr current_symbol = root;
 	while(current_symbol) {
-		if(!strcmp(current_symbol->name,symbol_name)) {
+		if(are_strings_equal(current_symbol->name,symbol_name)) {
 			return current_symbol;
 		}
 		else if (strcmp(current_symbol->name, symbol_name) > 0) {
@@ -179,7 +179,7 @@ static void update_symbol_table_recursion(symbolPtr root, int icf) {
 	if(root == NULL) {
 		return;
 	}
-	if(root->attributes.data) {
+	if((root->attributes.data) && (!root->attributes.external)) {
 		root->value += icf;
 	}
 	update_symbol_table_recursion(root->left, icf);

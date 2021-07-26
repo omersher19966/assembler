@@ -4,18 +4,16 @@
 
 void assembler_second_pass(FILE *fp) { 
 
-	char *line = (char *) malloc(MAX_LINE), *word = NULL;
+	char *allocated_line = (char *) malloc(MAX_LINE), *line , *word = NULL;
 	int error_code = OK;
 	
 	/* reset previous indexes. */
 	code_image_index = 0;
 	lc = 0;
 	
-	if(!line) {
-		print_error(MEMORY_ALLOCATION_FAILED);
-	}
-	else {
-		while((line = fgets(line, MAX_LINE, fp)) != NULL && global_memory_flag == false) {
+	if(allocated_line) {
+
+		for(line = allocated_line; (fgets(line, MAX_LINE, fp) != NULL) && (global_memory_flag == false); line = allocated_line) {
 			
             lc++;
 			word = NULL;
@@ -50,6 +48,10 @@ void assembler_second_pass(FILE *fp) {
 			}
 		}
 	}
+	else {
+		print_error(MEMORY_ALLOCATION_FAILED);
+	}
+	free(allocated_line);
 	return;
 }
 
@@ -97,7 +99,7 @@ int complete_command_data(char *line, char *word) {
 	if(instruction_group == BRANCHING_I_INSTRUCTIONS) {
 		if((symbol = get_symbol_from_table(operands_list[THIRD_OPERAND]))) {
 			if(!(symbol->attributes.external)) {
-				code_image[code_image_index].value = symbol->value - code_image[code_image_index].value;
+				code_image[code_image_index].instruction_fmt.instruction_i.immed = symbol->value - code_image[code_image_index].instruction_fmt.instruction_i.immed;
 			}
 			else {
 				error_code = EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND;
@@ -108,23 +110,18 @@ int complete_command_data(char *line, char *word) {
 		}
 	}
 	else if(instruction_type == INSTRUCTION_J && instruction_group != STOP) {
-		if((symbol = get_symbol_from_table(operands_list[FIRST_OPERAND]))){
-			if(symbol->attributes.external) {
-				error_code = add_symbol_to_external_list(symbol, code_image[code_image_index].value);
-			}
-			if(instruction_group == JMP) {
-				if(!(code_image[code_image_index].instruction_fmt.instruction_j.reg)) {
-					code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;
+		if(code_image[code_image_index].instruction_fmt.instruction_j.reg == false) {
+			if((symbol = get_symbol_from_table(operands_list[FIRST_OPERAND]))){
+				if(symbol->attributes.external) {
+					error_code = add_symbol_to_external_list(symbol, code_image[code_image_index].value);
 				}
-			}	
+				code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;	
+			}
 			else {
-				code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;
-			}	
-		}
-		else{
-			error_code = SYMBOL_DOESNT_EXIST_IN_TABLE;
-		}
-	}	
+				error_code = SYMBOL_DOESNT_EXIST_IN_TABLE;
+			}
+		}	
+	}
 	
 	code_image_index++;
 	return error_code;

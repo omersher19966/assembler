@@ -4,13 +4,13 @@
 
 void assembler_first_pass(FILE *fp) {
 	
-	char *word = NULL, *label = NULL, *line = (char *) malloc(MAX_LINE); /* need to handle malloc */
+	char *word = NULL, *label = NULL, *allocated_line = (char *) malloc(MAX_LINE), *line; /* need to handle malloc */
 	bool is_label;
 	int error_code = OK;
 	
-	if(line) {
+	if(allocated_line) {
 
-		while(fgets(line, MAX_LINE, fp) != NULL && global_memory_flag == false) { /* global_error_flag == false */
+		for(line = allocated_line;fgets(line, MAX_LINE, fp) != NULL && global_memory_flag == false; line = allocated_line) { /* global_error_flag == false */
 			
 			lc++;
 			is_label = false;
@@ -90,7 +90,7 @@ void assembler_first_pass(FILE *fp) {
 	else {
 		print_error(MEMORY_ALLOCATION_FAILED);
 	}
-
+	free(allocated_line);
 	return;	
 }
 
@@ -220,7 +220,7 @@ int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char 
 		for(i = 0; i < operands_num && !is_error(error_code); i++) {
 			error_code = check_register(operands_list[i]);
 			if (!is_error(error_code)) {
-				operands_list[i]++;
+				operands_list[i];
 				registers[i] = convert_to_register(operands_list[i]);
 			}	
 		}
@@ -252,8 +252,8 @@ int parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char 
 			if(is_error(error_code = check_register(operands_list[FIRST_OPERAND])) || is_error(error_code = check_register(operands_list[THIRD_OPERAND]))) {
 				return error_code;
 			}
-			registers[i++] = convert_to_register(++operands_list[FIRST_OPERAND]); /* skipping the dolar sign by using ++ */
-			registers[i++] = convert_to_register(++operands_list[THIRD_OPERAND]); /* skipping the dolar sign by using ++ */
+			registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]); /* skipping the dolar sign by using ++ */
+			registers[i++] = convert_to_register(operands_list[THIRD_OPERAND]); /* skipping the dolar sign by using ++ */
 			
 			if(is_valid_number(operands_list[SECOND_OPERAND])) {
 				immed = atoi(operands_list[SECOND_OPERAND]);
