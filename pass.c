@@ -339,24 +339,6 @@ bool is_valid_operands_line(char *line) {
 }
 
 /* ---------------------------------------- */
-/* need to handle it: malloc, get_num_of_elements is better. */
-bool is_valid_asciz_line(char *line) {
-	char *copied_line = (char *) malloc(MAX_LINE), *element, *line_ptr;
-	int max_operands = 1, i;
-
-	strcpy(copied_line, line);
-	line_ptr = copied_line;
-
-	for(i=0; (element = get_next_element(&line_ptr, COMMA_DELIMETER_STR)) != NULL ; i++); 
-	free(copied_line);
-	
-	if(i == max_operands) {
-		return true;
-	}
-	return false;
-}
-
-/* ---------------------------------------- */
 
 int convert_to_register(char *operand) {
 	return atoi(++operand);/*increasing operand for skipping the reg sing - $ */

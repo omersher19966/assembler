@@ -157,13 +157,13 @@ int parse_command_sentence(char *line, char *word) {
 /* ---------------------------------------- */
 
 int parse_guidance_sentence(char *line, char *word) {
-	
+	/* need to add - parse data command */
 	char operand[MAX_LINE], *element;
 	int error_code = OK, jmp;
 	long num;
 
 	if (is_empty_line(line)) {
-		error_code = INVALID_OPERANDS_LINE;
+		error_code = NO_GIVEN_OPERANDS;
 	}
 	else if(!(are_strings_equal(word, ASCIZ))){ /* parse db,dh,dw guidance commands. */
 		if(are_strings_equal(word, DB)) { 
@@ -188,24 +188,7 @@ int parse_guidance_sentence(char *line, char *word) {
 		}
 	}
 	else { /* parse asciz guidance command. */
-			int len, index;
-			if(is_valid_asciz_line(line)){
-				element = get_next_element(&line, COMMA_DELIMETER_STR);
-				strcpy(operand, element);
-				remove_trailing_spaces(operand);
-				if(is_valid_string(operand)) {
-					len = strlen(operand) - 1;
-					for(index = 1; index < len; index++) {
-						add_to_data_image(element[index], CHAR_JMP);
-					}
-					if(!is_error(error_code)) {
-						add_to_data_image(EOS, CHAR_JMP);
-					}
-				}
-				else {
-					error_code = INVALID_STRING;
-				}
-			}
+		error_code = parse_asciz_command(line);
 	}
 	return error_code;
 }
@@ -329,6 +312,36 @@ int parse_j_instruction(instruction *instruction_ptr,command *command_ptr, char 
 	return error_code;
 }
 
+
+
+/* ---------------------------------------- */
+
+int parse_asciz_command(char *line) { 
+ 	
+	 const reqOperands asciz_operands_num = ONE_OPERAND;
+	reqOperands operands_num;
+	int error_code = OK, len, index;
+	char *element, operand[MAX_LINE];
+
+	if((error_code = check_operands_num(line, asciz_operands_num)) == OK) {
+		element = get_next_element(&line, COMMA_DELIMETER_STR);
+		strcpy(operand, element);
+		if(is_valid_string(operand)){
+			len = strlen(operand) - 1;
+			for(index = 1; index < len; index++) {
+				error_code = add_to_data_image(element[index], CHAR_JMP);
+			}
+			if(!is_error(error_code)) {
+				error_code = add_to_data_image(EOS, CHAR_JMP);
+			}
+		}
+		else {
+			error_code = INVALID_STRING;
+		}
+	}
+	
+	return error_code;
+}
 
 /* ---------------------------------------- */
 

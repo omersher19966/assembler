@@ -78,6 +78,18 @@ void print_error(int error_code, int file_num) {
 		case ABOVE_MAX_LINE:
 			printf("File %d: line %d - max characters per line is %d.\n", file_num, lc, MAX_LINE);
 			break;
+		case NO_GIVEN_OPERANDS:
+			printf("File %d: line %d - operands were not given for the command.\n", file_num, lc);
+			break;
+		case GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED:
+			printf("File %d: line %d - given operands are less than required.\n", file_num, lc, MAX_LINE);
+			break;
+		case GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED:
+			printf("File %d: line %d - given operands are more then required.\n", file_num, lc, MAX_LINE);
+			break;
+		case INVALID_OPERANDS_LINE:
+			printf("File %d: line %d - line is not valid due to comma character in the end of the line.\n", file_num, lc, MAX_LINE);
+			break;
 		default:
 			printf("File %d: line %d - %d\n", file_num, lc, error_code);
 			break;			 	      	

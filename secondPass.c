@@ -63,7 +63,7 @@ int parse_entry_sentence(char *line) {
 	int error_code = OK;
 
 	if(!is_error(error_code = check_operands_num(line, ONE_OPERAND))) {
-        operand = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
+        operand = get_next_element(&line, COMMA_DELIMETER_STR);
 		if(!is_error(error_code = check_label(operand, false, false))) {
 			if((symbol = get_symbol_from_table(operand)) != NULL) {
 				if(symbol->attributes.external) {

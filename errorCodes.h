@@ -17,24 +17,24 @@
     #define INVALID_NUMBER 5 /* v */
     #define INVALID_STRING 6 /* v */
     #define INVALID_CMD 7 /* v */
-    #define INVALID_REGISTER 8 /* v - NEED TO ADD THE CHECK VALID REGISTER */
+    #define INVALID_REGISTER 8 /* v */
 
     /* Pass Errors */
-    #define ABOVE_MAX_LINE 19  /* v */
-    #define COMMENT_LINE 20
-    #define EMPTY_LINE 21
-    #define INVALID_OPERANDS_LINE 22
-    #define NO_GIVEN_OPERANDS 23
-    #define GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED 24
-    #define GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED 25
-    #define INVALID_OPERAND 26
-    #define OPERAND_IS_NULL 27
-    #define REGISTER_NOT_IN_RANGE 29
-    #define INVALID_ENTRY_SENTENCE 30
-    #define EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND 31
-    #define CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE 32
-    #define CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE 33
-    #define CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE 34
+    #define ABOVE_MAX_LINE 10  /* v */
+    #define COMMENT_LINE 11 /* v - message is not needed */
+    #define EMPTY_LINE 12 /* v - message is not needed */
+    #define NO_GIVEN_OPERANDS 13 /* v */
+    #define GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED 14 /* v */
+    #define GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED 15 /* v */
+    #define INVALID_OPERANDS_LINE 16 /* v */
+    #define INVALID_OPERAND 17
+    #define OPERAND_IS_NULL 18
+    #define REGISTER_NOT_IN_RANGE 19
+    #define INVALID_ENTRY_SENTENCE 20
+    #define EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND 21
+    #define CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE 22
+    #define CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE 23
+    #define CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE 24
 
 
     /* Label/Symbol Error Codes */ 
