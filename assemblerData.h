@@ -59,7 +59,7 @@
 
     /* Functions - assemblerUtils */
 
-    void    print_error(int error_code);
+    void    print_error(int error_code,int file_num);
     void    print_file_processing(int i);
     void    print_seperation();
     void    skip_spaces(char** word);

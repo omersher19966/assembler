@@ -2,7 +2,7 @@
 
 /* ---------------------------------------- */
 
-void assembler_second_pass(FILE *fp) { 
+void assembler_second_pass(FILE *fp, int file_num) { 
 
 	char *allocated_line = (char *) malloc(MAX_LINE), *line , *word = NULL;
 	int error_code = OK;
@@ -20,7 +20,7 @@ void assembler_second_pass(FILE *fp) {
 
 			if(is_error(error_code = check_line(line))) {
 				if(error_code == MEMORY_ALLOCATION_FAILED) {
-					print_error(error_code);
+					print_error(error_code, file_num);
 				}
 				else if(error_code == ABOVE_MAX_LINE) {
 					start_new_line(fp);
@@ -36,12 +36,12 @@ void assembler_second_pass(FILE *fp) {
 				if(!(is_guidance_word(word) || is_extern_word(word))) {
 					if(is_entry_word(word)){
 						if(is_error(error_code = parse_entry_sentence(line))) {
-							print_error(error_code);
+							print_error(error_code, file_num);
 						}
 					}
 					else { /* command_sentence */
 						if(is_error(error_code = complete_command_data(line, word))) {
-							print_error(error_code);
+							print_error(error_code, file_num);
 						} 
 					}
 				}
@@ -49,7 +49,7 @@ void assembler_second_pass(FILE *fp) {
 		}
 	}
 	else {
-		print_error(MEMORY_ALLOCATION_FAILED);
+		print_error(MEMORY_ALLOCATION_FAILED, file_num);
 	}
 	free(allocated_line);
 	return;

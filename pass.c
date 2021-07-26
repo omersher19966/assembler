@@ -63,11 +63,11 @@ static void print_the_rest(FILE *object_file, int available_bytes, int address, 
 
 /* ---------------------------------------- */
 
-void pass(FILE *fp, char *file_name) {
+void pass(FILE *fp, char *file_name, int file_num) {
 	
 	int error_code = OK, icf, dcf;
 	
-	assembler_first_pass(fp);
+	assembler_first_pass(fp, file_num);
 				
 	if(global_error_flag) {
 		printf("Error was detected, files have not been created.\n");
@@ -83,7 +83,7 @@ void pass(FILE *fp, char *file_name) {
 	update_data_image(icf);
 
 	/* second pass */
-	assembler_second_pass(fp);
+	assembler_second_pass(fp, file_num);
 				
 
 	if(global_error_flag) {
@@ -93,7 +93,7 @@ void pass(FILE *fp, char *file_name) {
 
 	remove_file_extension(file_name);
 	if(is_error(error_code = create_output_files(file_name, icf, dcf))) {
-		print_error(error_code);
+		print_error(error_code, file_num);
 	}
 
 }
@@ -184,7 +184,7 @@ void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 	}
 	/* in case temp still contains data - print the rest */
 	if(available_bytes != EMPTY){
-		print_the_rest(object_file, available_bytes, address+address_jmp, temp);
+		print_the_rest(object_file, available_bytes, address, temp);
 	}
 	
 

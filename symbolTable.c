@@ -1,6 +1,6 @@
 #include "symbol.h"
 
-symbolPtr root;
+symbolPtr root = NULL;
 
 /* ---------------------------------------- */
 

@@ -39,10 +39,7 @@ int main(int argc, char *argv[]) {
 			global_memory_flag = false;
 			
 			if(fp) {
-				print_seperation();
-				print_file_processing(i);
-				pass(fp,file_name);
-				printf("finished processing\n");
+				pass(fp, file_name, i);
 				free_memory();
 				fclose(fp);
 			}			

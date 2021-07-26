@@ -132,7 +132,7 @@
 
     /* ------------ Functions ------------ */
     
-    void    pass(FILE *fp, char *file_name);
+    void    pass(FILE *fp, char *file_name, int file_num);
 
     void    print_code_image_to_file(FILE *object_file ,int icf);
     void    print_data_image_to_file(FILE *object_file ,int icf, int dcf);
@@ -167,7 +167,7 @@
 
     /* ----- First pass ----- */ 
     
-    void    assembler_first_pass(FILE *);
+    void    assembler_first_pass(FILE *fp, int file_num);
     
     void    set_arithmetic_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
     void    set_copy_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
@@ -189,7 +189,7 @@
 
     /* ----- Second Pass ----- */ 
     
-    void    assembler_second_pass(FILE *);
+    void    assembler_second_pass(FILE *fp, int file_num);
 
     int     parse_entry_sentence(char *line);
     int     complete_command_data(char *line, char *word);

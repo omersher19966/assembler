@@ -39,42 +39,49 @@ const char *assembly_keywords[] = {
 
 /* ---------------------------------------- */
 
-void print_error(int error_code) {
-	if (error_code == MEMORY_ALLOCATION_FAILED) {
+void print_error(int error_code, int file_num) {
+	
+	if(global_error_flag == false) {
+		printf("------------- File %d Errors --------------\n", file_num);
+	}
+	
+	if (error_code == MEMORY_ALLOCATION_FAILED || error_code == DATA_IMAGE_IS_FULL || error_code == CODE_IMAGE_IS_FULL) {
 		global_memory_flag = true;
 	}
+	
 	global_error_flag = true;
-	printf("line %d: %d\n", lc, error_code);
-	/*switch(error_type) {
-		case NO_GIVEN_FILES: 
-			printf("NO_GIVEN_FILES\n");
+	
+	switch(error_code) {
+		/* Assembler Error Code Messages */
+		case MEMORY_ALLOCATION_FAILED: 
+			printf("File %d: stopped processing the file due to lack of memory\n", file_num);
 			break;
-		case INVALID_EXTENSION: 
-			printf("INVALID_EXTENSION\n");
+		case DATA_IMAGE_IS_FULL: 
+			printf("File %d: stopped processing the file because data image is full.\n", file_num);
+			break;
+		case CODE_IMAGE_IS_FULL: 
+			printf("File %d: stopped processing the file because code image is full.\n", file_num);
+			break;
+		case INVALID_NUMBER:
+			printf("File %d: line %d - the given operand is not a valid number.\n", file_num, lc);
+			break;
+		case INVALID_STRING:
+			printf("File %d: line %d - the given operand is not a valid string.\n", file_num, lc);
+			break;
+		case INVALID_CMD:
+			printf("File %d: line %d - the given command is not a valid command.\n", file_num, lc);
+			break;
+		case INVALID_REGISTER:
+			printf("File %d: line %d - the given operand is not a valid register.\n", file_num, lc);
+			break;
+		/* others */
+		case ABOVE_MAX_LINE:
+			printf("File %d: line %d - max characters per line is %d.\n", file_num, lc, MAX_LINE);
 			break;
 		default:
-			printf("Default option\n");
+			printf("File %d: line %d - %d\n", file_num, lc, error_code);
 			break;			 	      	
-	}*/
-}
-
-/* ---------------------------------------- */
-
-void print_seperation() {
-	printf("-----------------------------------");
-}
-
-/* ---------------------------------------- */
-
-void print_file_processing(int i) {
-	printf("\nProccessing file %d...\n", i);
-}
-
-/* ---------------------------------------- */
-
-void print_entry_file(FILE *ent_file) {
-	symbolPtr symbol_ptr;
-	
+	}
 }
 
 /* ---------------------------------------- */
@@ -118,18 +125,26 @@ bool is_valid_number(char *operand) {
 }
 
 /* ---------------------------------------- */
-
+/*need to check it */
 int check_register(char *operand) {
+	
 	int error_code = OK, register_num;
-	if( (!(*operand++ == REG_SIGN)) && is_valid_number(operand)){
-		error_code = NOT_A_REGISTER;
-	}
-	else {
-		register_num = atoi(operand);
-		if (!(register_num >= START_REGISTER && register_num <= END_REGISTER)) {
-			error_code = REGISTER_NOT_IN_RANGE;
+	
+	if(*operand++ == REG_SIGN) {
+		if (is_valid_number(operand)){
+			register_num = atoi(operand);
+			if ((register_num < START_REGISTER) || (register_num > END_REGISTER)) {
+				error_code = INVALID_REGISTER;
+			}
+		}
+		else {
+			error_code = INVALID_REGISTER;
 		}
 	}
+	else {
+		error_code = INVALID_REGISTER;
+	}
+
 	return error_code;
 }
 
@@ -184,11 +199,8 @@ bool is_assembly_key_word(char *word) {
 
 /* ---------------------------------------- */
 
-
-/* ---------------------------------------- */
-
 void start_new_line(FILE *fp) {
-	while(getc(fp) != EOL || getc(fp) != EOF)
+	while((getc(fp) != EOL) && (getc(fp) != EOF))
 	;
 }
 

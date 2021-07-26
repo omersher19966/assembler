@@ -2,7 +2,7 @@
 
 /* ---------------------------------------- */
 
-void assembler_first_pass(FILE *fp) {
+void assembler_first_pass(FILE *fp, int file_num) {
 	
 	char *word = NULL, *label = NULL, *allocated_line = (char *) malloc(MAX_LINE), *line; /* need to handle malloc */
 	bool is_label;
@@ -15,6 +15,7 @@ void assembler_first_pass(FILE *fp) {
 			lc++;
 			is_label = false;
 			word = NULL;
+			label= NULL;
 			error_code = OK;
 
 			if((error_code = check_line(line)) != OK) {
@@ -22,7 +23,7 @@ void assembler_first_pass(FILE *fp) {
 					if (error_code == ABOVE_MAX_LINE) {
 						start_new_line(fp);
 					}
-					print_error(error_code);
+					print_error(error_code, file_num);
 				}
 			}
 			else {
@@ -33,7 +34,7 @@ void assembler_first_pass(FILE *fp) {
 					if(!is_error(error_code)) {
 						is_label = true;					}
 					else {
-						print_error(error_code);
+						print_error(error_code, file_num);
 					}
 					label = word;
 					word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
@@ -48,12 +49,12 @@ void assembler_first_pass(FILE *fp) {
 							add_symbol_to_table(label, false, true, false, false);
 						}
 						else {
-							print_error(error_code);
+							print_error(error_code, file_num);
 						}
 					}
 					error_code = parse_guidance_sentence(line, word);
 					if(is_error(error_code)){
-						print_error(error_code);
+						print_error(error_code, file_num);
 					}
 				}
 				else if(is_entry_word(word)){
@@ -62,7 +63,7 @@ void assembler_first_pass(FILE *fp) {
 				else if(is_extern_word(word)){
 					error_code = parse_extern_sentence(line);
 					if (is_error(error_code)) {
-						print_error(error_code);
+						print_error(error_code, file_num);
 					}
 				}
 				else if(is_command_word(word)) {
@@ -72,23 +73,23 @@ void assembler_first_pass(FILE *fp) {
 							add_symbol_to_table(label, true, false, false, false);
 						}
 						else {
-							print_error(error_code);
+							print_error(error_code, file_num);
 						}
 					}
 					error_code = parse_command_sentence(line, word);
 					if (is_error(error_code)) {
-						print_error(error_code);
+						print_error(error_code, file_num);
 					}
 					
 				}
 				else {
-					print_error(error_code = INVALID_CMD);
+					print_error(error_code = INVALID_CMD,file_num);
 				}
 			}
 		}
 	}
 	else {
-		print_error(MEMORY_ALLOCATION_FAILED);
+		print_error(MEMORY_ALLOCATION_FAILED, file_num);
 	}
 	free(allocated_line);
 	return;	
@@ -98,7 +99,7 @@ void assembler_first_pass(FILE *fp) {
 
 int parse_extern_sentence(char *line) {
 	int error_code = OK;
-	char *operand, *element;
+	char *element;
 	reqOperands operands_num = ONE_OPERAND;
 	symbolPtr symbol = NULL;
 
@@ -109,7 +110,7 @@ int parse_extern_sentence(char *line) {
 				add_symbol_to_table(element, false, true, false, true);
 			}
 			else {
-				if (symbol->attributes.entry = true) {
+				if ((symbol->attributes.entry = true)) {
 					error_code = SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY;
 				}
 			}
@@ -197,7 +198,9 @@ int parse_guidance_sentence(char *line, char *word) {
 					for(index = 1; index < len; index++) {
 						add_to_data_image(element[index], CHAR_JMP);
 					}
-					add_to_data_image(EOS, CHAR_JMP);
+					if(!is_error(error_code)) {
+						add_to_data_image(EOS, CHAR_JMP);
+					}
 				}
 				else {
 					error_code = INVALID_STRING;
