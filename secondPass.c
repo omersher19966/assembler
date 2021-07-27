@@ -124,7 +124,7 @@ int complete_command_data(char *line, char *word) {
 				}
 			}	
 		}
-		
+		free(operands_list);
 		code_image_index++;
 	}
 	else {

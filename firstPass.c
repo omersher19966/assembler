@@ -210,6 +210,9 @@ int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char 
 				set_copy_r_instruction(instruction_ptr, command_ptr, registers);
 			}
 		}
+
+		free(operands_list);
+		free(registers);
 	}
 	else {
 		error_code = MEMORY_ALLOCATION_FAILED;
@@ -260,6 +263,8 @@ int parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char 
 				set_branching_i_instruction(instruction_ptr ,command_ptr, registers);
 				
 			}
+			free(operands_list);
+			free(registers);
 
 		}
 	}

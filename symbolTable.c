@@ -202,6 +202,7 @@ static void free_symbol_table_recursion(symbolPtr root) {
 
 void free_symbol_table() {
 	free_symbol_table_recursion(root);
+	root = NULL;
 }
 
 /* ---------------------------------------- */

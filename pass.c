@@ -229,6 +229,8 @@ void free_entry_list() {
         head = temp -> next;
         free(temp);
     }
+
+	ent_head = NULL;
 }
 
 /* ---------------------------------------- */
@@ -242,6 +244,8 @@ void free_external_list() {
         head = temp -> next;
         free(temp);
     }
+
+	ext_head = NULL;
 }
 
 /* ---------------------------------------- */
