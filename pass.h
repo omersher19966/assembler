@@ -83,15 +83,21 @@
 
     typedef enum{BYTE = 1, HALF_WORD = 2, WORD = 4} dataType;
 
-    typedef struct data {
+    typedef struct directiveData {
         int value;
         dataType type;
         union {
-            unsigned long byte: 8;
-            unsigned long half_word: 16;
-            unsigned long word: 32;
-        } data;
-    } data;
+            struct {
+                unsigned int data: 8;
+            } byte;
+            struct {
+                unsigned int data: 16;
+            } half_word;
+            struct {
+                unsigned int data: 32;
+            } word;
+        } data_fmt;
+    } directiveData;
 
     typedef struct externalNode * externalNodePtr;
     
@@ -118,7 +124,7 @@
 
     extern int ic, dc, lc;
     extern instruction code_image[];
-    extern data data_image[];
+    extern directiveData data_image[];
     extern int code_image_index, data_image_index;
     extern externalNodePtr ext_head;
     extern entryNodePtr ent_head;

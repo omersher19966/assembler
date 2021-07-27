@@ -3,7 +3,7 @@
 
 /* Code + Data Image Setup */
 instruction code_image[MAX_CODE_SIZE];
-data data_image[MAX_DATA_SIZE];
+directiveData data_image[MAX_DATA_SIZE];
 
 int code_image_index = 0 , data_image_index = 0;
 
@@ -150,15 +150,15 @@ void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 			
 			if(available_bytes == EMPTY) {
 				if(data_image[index].type == BYTE) {
-					temp = data_image[index].data.byte;
+					temp = data_image[index].data_fmt.byte.data;
 					available_bytes = BYTE;
 				}
 				else if(data_image[index].type == HALF_WORD) {
-					temp = data_image[index].data.half_word;
+					temp = data_image[index].data_fmt.half_word.data;
 					available_bytes = HALF_WORD;
 				}
 				else {
-					temp = data_image[index].data.word;
+					temp = data_image[index].data_fmt.word.data;
 					available_bytes = WORD;
 				}
 				index++;
@@ -258,7 +258,7 @@ void free_code_image() {
 
 void free_data_image() {
 	int i;
-	data empty_data = {0}; /* used for reseting all structures in data image. */
+	directiveData empty_data = {0}; /* used for reseting all structures in data image. */
 	for(i=0; i < MAX_DATA_SIZE; i++) {
 		data_image[i] = empty_data;
 	}
@@ -374,15 +374,15 @@ int add_to_data_image(long num, int jmp) {
 
 		if(jmp == CHAR_JMP || jmp == DB_JMP) {
 			data_image[data_image_index].type = BYTE;
-			data_image[data_image_index].data.byte = num; 
+			data_image[data_image_index].data_fmt.byte.data = num; 
 		}
 		else if(jmp == DH_JMP) {
 			data_image[data_image_index].type = HALF_WORD;
-			data_image[data_image_index].data.half_word = num; 
+			data_image[data_image_index].data_fmt.half_word.data = num; 
 		}
 		else {
 			data_image[data_image_index].type = WORD;
-			data_image[data_image_index].data.word = num; 
+			data_image[data_image_index].data_fmt.word.data = num; 
 		}
 
 		data_image[data_image_index].value = dc;
