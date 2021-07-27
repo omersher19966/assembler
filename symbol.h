@@ -1,55 +1,61 @@
 #include "assemblerData.h"
 
-/* -------- Macros ---------- */
+#ifndef SYMBOL_H
+    
+    #define SYMBOL_H
 
-#define LABEL_SUFFIX ':'
-#define MAX_SYMBOL_NAME_LENGTH	32
+    /* -------- Macros ---------- */
 
-/* -------- External Declarations ---------- */
+    #define LABEL_SUFFIX ':'
+    #define MAX_SYMBOL_NAME_LENGTH	32
 
-extern int ic, dc;
+    /* -------- External Declarations ---------- */
 
-/* -------- New Types ---------- */
+    extern int ic, dc;
 
-/* symbol node pointer */
-typedef struct symbolNode * symbolPtr;
+    /* -------- New Types ---------- */
 
-/* symbol node */
+    /* symbol node pointer */
+    typedef struct symbolNode * symbolPtr;
 
-typedef struct symbolNode{
-  char name[MAX_SYMBOL_NAME_LENGTH];
-  int value;
-  struct {
-  	bool code;
-  	bool data;
-  	bool external;
-  	bool entry;
-  }attributes;
-  symbolPtr right;
-  symbolPtr left;
+    /* symbol node */
 
-} symbolNode;
+    typedef struct symbolNode{
+      char name[MAX_SYMBOL_NAME_LENGTH];
+      int value;
+      struct {
+        bool code;
+        bool data;
+        bool external;
+        bool entry;
+      }attributes;
+      symbolPtr right;
+      symbolPtr left;
 
-/* -------- Functions ---------- */
+    } symbolNode;
 
-/* Labels functions, label - a word before insertion to the symbol table */
+    /* -------- Functions ---------- */
 
-int					check_label(char *word, bool check_new_label, bool check_symbol_tabel);
-int    	  	check_valid_label(char *word);
+    /* Labels functions, label - a word before insertion to the symbol table */
 
-bool				is_new_label(char *word);
+    int					check_label(char *word, bool check_new_label, bool check_symbol_tabel);
+    int    	  	check_valid_label(char *word);
+
+    bool				is_new_label(char *word);
 
 
-/* Symbols functions, symbol - a word after insertion to the symbol table. */
+    /* Symbols functions, symbol - a word after insertion to the symbol table. */
 
 
-bool    		is_symbol_exist(char *symbol_name);
+    bool    		is_symbol_exist(char *symbol_name);
 
-symbolPtr   get_symbol_from_table(char *symbol_name);
-symbolPtr   create_new_symbol(char *, bool code, bool data, bool entry, bool external);
+    symbolPtr   get_symbol_from_table(char *symbol_name);
+    symbolPtr   create_new_symbol(char *, bool code, bool data, bool entry, bool external);
 
-int   			add_symbol(char *, bool code, bool data);
+    int   			add_symbol(char *, bool code, bool data);
 
-void    		add_symbol_to_table(char *, bool code, bool data, bool entry, bool external);
-void    		update_symbol_table(int icf);
-void    		free_symbol_table();
+    void    		add_symbol_to_table(char *, bool code, bool data, bool entry, bool external);
+    void    		update_symbol_table(int icf);
+    void    		free_symbol_table();
+
+#endif

@@ -2,6 +2,10 @@
     "files.associations": {
         "assemblerdata.h": "c",
         "pass.h": "c",
-        "symbol.h": "c"
+        "symbol.h": "c",
+        "stdio.h": "c",
+        "string.h": "c",
+        "ctype.h": "c",
+        "errorcodes.h": "c"
     }
 }

@@ -1,4 +1,5 @@
 #include "assemblerData.h"
+#include "pass.h"
 #include "symbol.h"
 
 const char *assembly_keywords[] = {
@@ -223,18 +224,12 @@ void remove_trailing_spaces (char *word) {
 
 /* ---------------------------------------- */
 
-bool is_empty_line(char *word) {
+bool is_empty_line(char *line) {
+	
 	char *ch;
-	for (ch = word; (isspace(*ch)) && (*ch != NULL); ch++)
+	for (ch = line; isspace(*ch); ch++)
 	;
-	return *word == EOS ? true : false;
-}
-
-/* ---------------------------------------- */
-
-void skip_spaces(char **word) {
-	for (; (isspace(*word)); *word++)
-	;
+	return *ch == EOS ? true : false;
 }
 
 /* ---------------------------------------- */

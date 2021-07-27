@@ -1,3 +1,4 @@
+#include "assemblerData.h"
 #include "pass.h"
 
 /* Code + Data Image Setup */
@@ -47,12 +48,12 @@ const command cmd[] = {
 };
 
 
-const directiveCommand directive_cmd[] = {
-	{".db"},
-	{".dh"},
-	{".dw"},
-	{".asciz"},
-	{NULL}
+const char * directive_cmd[] = {
+	".db",
+	".dh",
+	".dw",
+	".asciz",
+	NULL
 };
 
 /*Declarations of static functions */
@@ -288,7 +289,7 @@ void update_data_image(int icf) {
 
 bool is_command_word(char *word){
 	command *command_ptr;
-	for(command_ptr=cmd; command_ptr->commmad_name != NULL; command_ptr++) {
+	for(command_ptr = (command *)cmd; command_ptr->commmad_name != NULL; command_ptr++) {
 		if(are_strings_equal(command_ptr->commmad_name, word)) {
 			return true;
 		}
@@ -299,9 +300,9 @@ bool is_command_word(char *word){
 /* ---------------------------------------- */
 
 bool is_directive_word(char *word) {
-	directiveCommandPtr ptr;
-	for(ptr = directive_cmd; ptr->directive_command_name != NULL; ptr++) {
-		if(are_strings_equal(ptr->directive_command_name, word)) {
+	char **ptr;
+	for(ptr = (char **)directive_cmd; *ptr != NULL; ptr++) {
+		if(are_strings_equal(*ptr, word)) {
 			return true;
 		}
 	}
@@ -424,14 +425,14 @@ int check_line(char *line) {
 		line_ptr = copied_line;
 		element = get_next_element(&line_ptr, COMMA_DELIMETER_STR);
 		
-		if (line[last_char_index] != EOL) {
+		if(is_empty_line(line)) {
+			error_code = EMPTY_LINE;
+		}
+		else if (line[last_char_index] != EOL) {
 			error_code = ABOVE_MAX_LINE;
 		}
 		else if (!is_valid_operands_line(line)) {
 			error_code=  INVALID_OPERANDS_LINE;
-		}
-		else if(element == NULL) {
-			error_code = EMPTY_LINE;
 		}
 		else if(is_comment(element)) {
 			error_code = COMMENT_LINE;
@@ -558,7 +559,7 @@ void print_object_file(FILE *object_file, int icf, int dcf) {
 
 command *get_command(char *word) {
 	command *command_ptr;
-	for(command_ptr=cmd; command_ptr->commmad_name !=  NULL; command_ptr++) {
+	for(command_ptr=(command *)cmd; command_ptr->commmad_name !=  NULL; command_ptr++) {
 		if(!(strcmp(command_ptr->commmad_name, word))) {
 			return command_ptr;
 		}

@@ -1,7 +1,6 @@
 #include "assemblerData.h"
 #include "symbol.h"
 
-
 #ifndef PASS_H
 
     #define PASS_H
@@ -81,12 +80,6 @@
         instructionGroupType instruction_group;
         
     } command;
-
-    typedef struct directiveCommand * directiveCommandPtr;
-
-    typedef struct directiveCommand {
-        char *directive_command_name;
-    } directiveCommand;
 
     typedef enum{BYTE = 1, HALF_WORD = 2, WORD = 4} dataType;
 

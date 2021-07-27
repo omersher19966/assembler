@@ -201,13 +201,11 @@ int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char 
 	}
 
 	if(!is_error(error_code)) {
-		switch(command_ptr -> instruction_group) {
-			case ARITHMETIC_R_INSTRUCTIONS:
-				set_arithmetic_r_instruction(instruction_ptr, command_ptr, registers);
-				break;
-			case COPY_R_INSTRUCTIONS:
-				set_copy_r_instruction(instruction_ptr, command_ptr, registers);
-				break;
+		if (command_ptr -> instruction_group == ARITHMETIC_R_INSTRUCTIONS) {
+			set_arithmetic_r_instruction(instruction_ptr, command_ptr, registers);
+		}
+		else{ 
+			set_copy_r_instruction(instruction_ptr, command_ptr, registers);
 		}
 	}
 

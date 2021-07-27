@@ -62,7 +62,6 @@
     void    print_error(int error_code,int file_num, char *word);
     void    print_file_processing(int i);
     void    print_seperation();
-    void    skip_spaces(char** word);
     void    remove_trailing_spaces (char *word);
     void    start_new_line(FILE *fp);
     void    free_memory();
@@ -75,7 +74,7 @@
     bool    are_strings_equal(char *str1, char *str2);
     bool    is_valid_number(char *operand);
     bool    is_valid_string(char *operand);
-    bool    is_empty_line(char *word);
+    bool    is_empty_line(char *line);
     bool    is_assembly_key_word(char *word);
     bool    is_comment(char *word);
     bool    is_error(int error_code);
