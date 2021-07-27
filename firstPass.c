@@ -187,26 +187,32 @@ int parse_directive_sentence(char *line, char *word) {
 /* ---------------------------------------- */
 
 int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num) {
-	char *operands_list[operands_num];
-	int error_code = OK, i, registers[operands_num];
+	char **operands_list = (char **)malloc(operands_num * sizeof(char *));
+	int error_code = OK, i, *registers = (int *)malloc(operands_num * sizeof(int));
 
-	error_code = set_operands_list(line, operands_list, operands_num);
+	if(operands_list != NULL && registers != NULL) {
 	
-	if(!is_error(error_code)) {
-		for(i = 0; i < operands_num && !is_error(error_code); i++) {
-			if (!is_error(error_code = check_register(operands_list[i]))) {
-				registers[i] = convert_to_register(operands_list[i]);
-			}	
+		error_code = set_operands_list(line, operands_list, operands_num);
+		
+		if(!is_error(error_code)) {
+			for(i = 0; i < operands_num && !is_error(error_code); i++) {
+				if (!is_error(error_code = check_register(operands_list[i]))) {
+					registers[i] = convert_to_register(operands_list[i]);
+				}	
+			}
+		}
+
+		if(!is_error(error_code)) {
+			if (command_ptr -> instruction_group == ARITHMETIC_R_INSTRUCTIONS) {
+				set_arithmetic_r_instruction(instruction_ptr, command_ptr, registers);
+			}
+			else{ 
+				set_copy_r_instruction(instruction_ptr, command_ptr, registers);
+			}
 		}
 	}
-
-	if(!is_error(error_code)) {
-		if (command_ptr -> instruction_group == ARITHMETIC_R_INSTRUCTIONS) {
-			set_arithmetic_r_instruction(instruction_ptr, command_ptr, registers);
-		}
-		else{ 
-			set_copy_r_instruction(instruction_ptr, command_ptr, registers);
-		}
+	else {
+		error_code = MEMORY_ALLOCATION_FAILED;
 	}
 
 	return error_code;
@@ -214,48 +220,52 @@ int parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char 
 
 /* ---------------------------------------- */
 int parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num) {
-	char *operands_list[operands_num];
-	int registers[operands_num-1],error_code = OK, immed = 0, i=0;  
+	char **operands_list = (char **)malloc(operands_num * sizeof(char *));
+	int *registers = (int *)malloc((operands_num-1) * (sizeof(int))),error_code = OK, immed = 0, i=0;  
 	instructionGroupType instruction_group = command_ptr -> instruction_group;
 	void (*func)(instruction *, command *, int *, int);
 
-	if ((error_code = set_operands_list(line, operands_list, operands_num)) == OK) {
-		if(instruction_group == ARITHMETIC_I_INSTRUCTIONS || instruction_group == LOADING_STORING_I_INSTRUCTIONS) {
-			if(is_error(error_code = check_register(operands_list[FIRST_OPERAND])) || is_error(error_code = check_register(operands_list[THIRD_OPERAND]))) {
-				return error_code;
+	if (registers != NULL && operands_list != NULL) {
+		if ((error_code = set_operands_list(line, operands_list, operands_num)) == OK) {
+			if(instruction_group == ARITHMETIC_I_INSTRUCTIONS || instruction_group == LOADING_STORING_I_INSTRUCTIONS) {
+				if(is_error(error_code = check_register(operands_list[FIRST_OPERAND])) || is_error(error_code = check_register(operands_list[THIRD_OPERAND]))) {
+					return error_code;
+				}
+				registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]); /* skipping the dolar sign by using ++ */
+				registers[i++] = convert_to_register(operands_list[THIRD_OPERAND]); /* skipping the dolar sign by using ++ */
+				
+				if(is_valid_number(operands_list[SECOND_OPERAND])) {
+					immed = atoi(operands_list[SECOND_OPERAND]);
+				}
+				else {
+					error_code = INVALID_NUMBER;
+					return error_code;
+				}
+
+				func = (instruction_group == ARITHMETIC_I_INSTRUCTIONS) ? set_arithmetic_i_instruction : set_loading_storing_i_instruction;
+				func(instruction_ptr, command_ptr, registers, immed);
 			}
-			registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]); /* skipping the dolar sign by using ++ */
-			registers[i++] = convert_to_register(operands_list[THIRD_OPERAND]); /* skipping the dolar sign by using ++ */
+			else { /* handeles branching i instructions group */
+				if(is_error(error_code = check_register(operands_list[FIRST_OPERAND])) || is_error(check_register(operands_list[SECOND_OPERAND]))) {
+					return error_code;
+				}
+				
+				registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]);
+				registers[i++] = convert_to_register(operands_list[SECOND_OPERAND]);
 			
-			if(is_valid_number(operands_list[SECOND_OPERAND])) {
-				immed = atoi(operands_list[SECOND_OPERAND]);
-			}
-			else {
-				error_code = INVALID_NUMBER;
-				return error_code;
+				if(is_error(error_code = check_label(operands_list[THIRD_OPERAND], false, false))) {
+					return error_code;
+				}
+
+				set_branching_i_instruction(instruction_ptr ,command_ptr, registers);
+				
 			}
 
-			func = (instruction_group == ARITHMETIC_I_INSTRUCTIONS) ? set_arithmetic_i_instruction : set_loading_storing_i_instruction;
-			func(instruction_ptr, command_ptr, registers, immed);
 		}
-		else { /* handeles branching i instructions group */
-			if(is_error(error_code = check_register(operands_list[FIRST_OPERAND])) || is_error(check_register(operands_list[SECOND_OPERAND]))) {
-				return error_code;
-			}
-			
-			registers[i++] = convert_to_register(operands_list[FIRST_OPERAND]);
-			registers[i++] = convert_to_register(operands_list[SECOND_OPERAND]);
-		
-			if(is_error(error_code = check_label(operands_list[THIRD_OPERAND], false, false))) {
-				return error_code;
-			}
-
-			set_branching_i_instruction(instruction_ptr ,command_ptr, registers);
-			
-		}
-
 	}
-
+	else {
+		error_code = MEMORY_ALLOCATION_FAILED;
+	}
 	return error_code;
 
 }

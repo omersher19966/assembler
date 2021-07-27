@@ -92,39 +92,44 @@ int complete_command_data(char *line, char *word) {
 	instructionGroupType instruction_group = command_ptr -> instruction_group;
 	symbolPtr symbol;
 	reqOperands operands_num = command_ptr -> operands_num;
-	char *operands_list[operands_num];
+	char **operands_list = (char **)malloc(operands_num * sizeof(char *));	
 	int error_code = OK;
  	 
-	set_operands_list(line, operands_list, operands_num); /* should work fine because error_code was checked in the first lap. */
+	if (operands_list != NULL) {
+		set_operands_list(line, operands_list, operands_num); /* should work fine because error_code was checked in the first lap. */
 
-	if(instruction_group == BRANCHING_I_INSTRUCTIONS) {
-		if((symbol = get_symbol_from_table(operands_list[THIRD_OPERAND]))) {
-			if(!(symbol->attributes.external)) {
-				code_image[code_image_index].instruction_fmt.instruction_i.immed = symbol->value - code_image[code_image_index].instruction_fmt.instruction_i.immed;
-			}
-			else {
-				error_code = EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND;
-			}
-		}
-		else {
-			error_code = SYMBOL_IS_NOT_DEFINED;
-		}
-	}
-	else if(instruction_type == INSTRUCTION_J && instruction_group != STOP) {
-		if(code_image[code_image_index].instruction_fmt.instruction_j.reg == false) {
-			if((symbol = get_symbol_from_table(operands_list[FIRST_OPERAND]))){
-				if(symbol->attributes.external) {
-					error_code = add_symbol_to_external_list(symbol, code_image[code_image_index].value);
+		if(instruction_group == BRANCHING_I_INSTRUCTIONS) {
+			if((symbol = get_symbol_from_table(operands_list[THIRD_OPERAND]))) {
+				if(!(symbol->attributes.external)) {
+					code_image[code_image_index].instruction_fmt.instruction_i.immed = symbol->value - code_image[code_image_index].instruction_fmt.instruction_i.immed;
 				}
-				code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;	
+				else {
+					error_code = EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND;
+				}
 			}
 			else {
 				error_code = SYMBOL_IS_NOT_DEFINED;
 			}
-		}	
+		}
+		else if(instruction_type == INSTRUCTION_J && instruction_group != STOP) {
+			if(code_image[code_image_index].instruction_fmt.instruction_j.reg == false) {
+				if((symbol = get_symbol_from_table(operands_list[FIRST_OPERAND]))){
+					if(symbol->attributes.external) {
+						error_code = add_symbol_to_external_list(symbol, code_image[code_image_index].value);
+					}
+					code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;	
+				}
+				else {
+					error_code = SYMBOL_IS_NOT_DEFINED;
+				}
+			}	
+		}
+		
+		code_image_index++;
 	}
-	
-	code_image_index++;
+	else {
+		error_code = MEMORY_ALLOCATION_FAILED;
+	}
 	return error_code;
 }
 
