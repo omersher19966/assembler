@@ -27,25 +27,23 @@
     #define GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED 14 /* v */
     #define GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED 15 /* v */
     #define INVALID_OPERANDS_LINE 16 /* v */
-    #define INVALID_OPERAND 17
-    #define OPERAND_IS_NULL 18
-    #define REGISTER_NOT_IN_RANGE 19
-    #define INVALID_ENTRY_SENTENCE 20
-    #define EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND 21
-    #define CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE 22
-    #define CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE 23
-    #define CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE 24
+    #define INVALID_OPERAND 17 /* v */
+    #define OPERAND_IS_EMPTY 18 /* v */
+    #define EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND 19 /* v */
+    #define CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE 22 /* v */
+    #define CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE 23 /* v */
+    #define CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE 24 /* v */
 
 
     /* Label/Symbol Error Codes */ 
-    #define VALID_LABEL 40
-    #define NOT_A_LABEL 41
-    #define INVALID_LABEL 42
-    #define LABEL_HAS_ALREADY_BEEN_USED 43
-    #define ABOVE_MAX_LABEL_LENGTH 44
-    #define SYMBOL_EXISTS_IN_TABLE 8
-    #define SYMBOL_DOESNT_EXIST_IN_TABLE 45
-    #define SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY 46
-    #define SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL 47
+    #define VALID_LABEL 30 /* v - message is not needed */
+    #define NOT_A_LABEL 31 /* v - message is not neede */
+    #define INVALID_LABEL 32 /* v */
+    #define ABOVE_MAX_LABEL 33 /* v */
+    #define LABEL_IS_ASSEMBLY_KEYWORD 34 /* v */
+    #define LABEL_HAS_ALREADY_BEEN_USED 35 /* v */
+    #define SYMBOL_IS_NOT_DEFINED 36 /* need to handle 36-38 after I will get an answer in the forum */
+    #define SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY 37
+    #define SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL 38
 
 #endif

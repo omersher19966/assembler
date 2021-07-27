@@ -39,7 +39,7 @@ const char *assembly_keywords[] = {
 
 /* ---------------------------------------- */
 
-void print_error(int error_code, int file_num) {
+void print_error(int error_code, int file_num, char *word) {
 	
 	if(global_error_flag == false) {
 		printf("------------- File %d Errors --------------\n", file_num);
@@ -69,26 +69,66 @@ void print_error(int error_code, int file_num) {
 			printf("File %d: line %d - the given operand is not a valid string.\n", file_num, lc);
 			break;
 		case INVALID_CMD:
-			printf("File %d: line %d - the given command is not a valid command.\n", file_num, lc);
+			printf("File %d: line %d - unrecognized command <%s>.\n", file_num, lc, word);
 			break;
 		case INVALID_REGISTER:
 			printf("File %d: line %d - the given operand is not a valid register.\n", file_num, lc);
 			break;
 		/* others */
 		case ABOVE_MAX_LINE:
-			printf("File %d: line %d - max characters per line is %d.\n", file_num, lc, MAX_LINE);
+			printf("File %d: line %d - the length of line is above max(%d).\n", file_num, lc, MAX_LINE);
 			break;
 		case NO_GIVEN_OPERANDS:
 			printf("File %d: line %d - operands were not given for the command.\n", file_num, lc);
 			break;
 		case GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED:
-			printf("File %d: line %d - given operands are less than required.\n", file_num, lc, MAX_LINE);
+			printf("File %d: line %d - given operands are less than required.\n", file_num, lc);
 			break;
 		case GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED:
-			printf("File %d: line %d - given operands are more then required.\n", file_num, lc, MAX_LINE);
+			printf("File %d: line %d - given operands are more then required.\n", file_num, lc);
 			break;
 		case INVALID_OPERANDS_LINE:
-			printf("File %d: line %d - line is not valid due to comma character in the end of the line.\n", file_num, lc, MAX_LINE);
+			printf("File %d: line %d - line is not valid due to comma character in the end of the line.\n", file_num, lc);
+			break;
+		case INVALID_OPERAND:
+			printf("File %d: line %d - the given operand is not valid.\n", file_num, lc);
+			break;
+		case OPERAND_IS_EMPTY:
+			printf("File %d: line %d - empty operand in line.\n", file_num, lc);
+			break;
+		case EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND:
+			printf("File %d: line %d - external label cannot be used in branching command, only entry label is allowed.\n", file_num, lc);
+			break;
+		case CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE:
+			printf("File %d: could not create or write to the externals file.\n", file_num);
+			break;
+		case CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE:
+			printf("File %d: could not create or write to the entries file.\n", file_num);
+			break;
+		case CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE:
+			printf("File %d: could not create or write to the object file.\n", file_num);
+			break;
+		/* Label/Symbol Error Codes */ 
+		case INVALID_LABEL:
+			printf("File %d: line %d - not a valid label <%s>.\n", file_num, lc, word);
+			break;
+		case ABOVE_MAX_LABEL:
+			printf("File %d: line %d - label is above max label length(%d).\n", file_num, lc, MAX_LABEL_LENGTH);
+			break;
+		case LABEL_IS_ASSEMBLY_KEYWORD:
+			printf("File %d: line %d - label is assembly keyword, cannot be used.\n", file_num, lc);
+			break;
+		case LABEL_HAS_ALREADY_BEEN_USED:
+			printf("File %d: line %d - label <%s> has already been defined in previous lines.\n", file_num, lc, word);
+			break;
+		case SYMBOL_IS_NOT_DEFINED:
+			printf("File %d: line %d - given label is not defined.\n", file_num, lc);
+			break;
+		case SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY:
+			printf("File %d: line %d - given label cannot be defined as external symbol because it's already defined as entry symbol.\n", file_num, lc);
+			break;
+		case SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL:
+			printf("File %d: line %d - given label cannot be defined as entry symbol becayse it's already defined as external symbol.\n", file_num, lc);
 			break;
 		default:
 			printf("File %d: line %d - %d\n", file_num, lc, error_code);

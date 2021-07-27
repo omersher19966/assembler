@@ -20,7 +20,7 @@ void assembler_second_pass(FILE *fp, int file_num) {
 
 			if(is_error(error_code = check_line(line))) {
 				if(error_code == MEMORY_ALLOCATION_FAILED) {
-					print_error(error_code, file_num);
+					print_error(error_code, file_num, NULL);
 				}
 				else if(error_code == ABOVE_MAX_LINE) {
 					start_new_line(fp);
@@ -33,15 +33,15 @@ void assembler_second_pass(FILE *fp, int file_num) {
 					word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
 				}
 				
-				if(!(is_guidance_word(word) || is_extern_word(word))) {
+				if(!(is_directive_word(word) || is_extern_word(word))) {
 					if(is_entry_word(word)){
 						if(is_error(error_code = parse_entry_sentence(line))) {
-							print_error(error_code, file_num);
+							print_error(error_code, file_num, word);
 						}
 					}
 					else { /* command_sentence */
 						if(is_error(error_code = complete_command_data(line, word))) {
-							print_error(error_code, file_num);
+							print_error(error_code, file_num,word);
 						} 
 					}
 				}
@@ -49,7 +49,7 @@ void assembler_second_pass(FILE *fp, int file_num) {
 		}
 	}
 	else {
-		print_error(MEMORY_ALLOCATION_FAILED, file_num);
+		print_error(MEMORY_ALLOCATION_FAILED, file_num, NULL);
 	}
 	free(allocated_line);
 	return;
@@ -75,7 +75,7 @@ int parse_entry_sentence(char *line) {
 				}
 			}
 			else {
-				error_code = SYMBOL_DOESNT_EXIST_IN_TABLE; /* need to change to more reasnoble error_code. */
+				error_code = SYMBOL_IS_NOT_DEFINED;
 			}
 		}
 	}
@@ -86,6 +86,7 @@ int parse_entry_sentence(char *line) {
 /* ---------------------------------------- */
 
 int complete_command_data(char *line, char *word) {
+	
 	command *command_ptr = get_command(word);
 	instructionType instruction_type = command_ptr -> instruction_type;
 	instructionGroupType instruction_group = command_ptr -> instruction_group;
@@ -106,7 +107,7 @@ int complete_command_data(char *line, char *word) {
 			}
 		}
 		else {
-			error_code = SYMBOL_DOESNT_EXIST_IN_TABLE;
+			error_code = SYMBOL_IS_NOT_DEFINED;
 		}
 	}
 	else if(instruction_type == INSTRUCTION_J && instruction_group != STOP) {
@@ -118,7 +119,7 @@ int complete_command_data(char *line, char *word) {
 				code_image[code_image_index].instruction_fmt.instruction_j.address = symbol->value;	
 			}
 			else {
-				error_code = SYMBOL_DOESNT_EXIST_IN_TABLE;
+				error_code = SYMBOL_IS_NOT_DEFINED;
 			}
 		}	
 	}

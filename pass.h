@@ -82,11 +82,11 @@
         
     } command;
 
-    typedef struct guidanceCommand * guidanceCommandPtr;
+    typedef struct directiveCommand * directiveCommandPtr;
 
-    typedef struct guidanceCommand {
-        char *guidance_command_name;
-    } guidanceCommand;
+    typedef struct directiveCommand {
+        char *directive_command_name;
+    } directiveCommand;
 
     typedef enum{BYTE = 1, HALF_WORD = 2, WORD = 4} dataType;
 
@@ -142,6 +142,9 @@
     void    free_code_image();
     void    free_data_image();
     void    reset_counters_indexes();
+    void    print_entry_file(FILE *entry_file);
+    void    print_external_file(FILE *external_file);
+    void    print_object_file(FILE *object_file, int icf, int dcf);
 
     int     check_line(char *line);
     int     check_operands_num(char *line ,reqOperands num);
@@ -150,12 +153,10 @@
     int     add_to_data_image(long num, int jmp);
     int     set_operands_list(char *line, char **operands_list, reqOperands operands_num);
     int     create_output_files(char *file_name, int icf, int dcf);
-    int     create_entry_file(char *file_name);
-    int     create_external_file(char *file_name);
-    int     create_object_file(char *file_name, int icf, int dcf);
+
 
     bool    is_command_word(char *);
-    bool    is_guidance_word(char *);
+    bool    is_directive_word(char *);
     bool    is_entry_word(char *word);
     bool    is_extern_word(char *word);
     bool    is_entry_list();
@@ -181,7 +182,7 @@
 
 
     int     parse_extern_sentence(char *line);
-    int     parse_guidance_sentence(char *line, char *word); /* need more work. */
+    int     parse_directive_sentence(char *line, char *word); /* need more work. */
     int     parse_command_sentence(char *line, char *word);
     int     parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
     int     parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);

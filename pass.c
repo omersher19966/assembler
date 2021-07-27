@@ -47,7 +47,7 @@ const command cmd[] = {
 };
 
 
-const guidanceCommand guidance_cmd[] = {
+const directiveCommand directive_cmd[] = {
 	{".db"},
 	{".dh"},
 	{".dw"},
@@ -70,7 +70,7 @@ void pass(FILE *fp, char *file_name, int file_num) {
 	assembler_first_pass(fp, file_num);
 				
 	if(global_error_flag) {
-		printf("Error was detected, files have not been created.\n");
+		printf("Assembler: files have not been created because of error(s).\n");
 		return;
 	}
 
@@ -87,14 +87,17 @@ void pass(FILE *fp, char *file_name, int file_num) {
 				
 
 	if(global_error_flag) {
-		printf("Error was detected, files have not been created.\n");
+		printf("Assembler: files have not been created because of error(s).\n");
 		return;
 	}
 
 	remove_file_extension(file_name);
 	if(is_error(error_code = create_output_files(file_name, icf, dcf))) {
-		print_error(error_code, file_num);
+		print_error(error_code, file_num, NULL);
+		printf("Assembler: files have not been created because of error(s).\n");
 	}
+
+	return;
 
 }
 
@@ -295,10 +298,10 @@ bool is_command_word(char *word){
 
 /* ---------------------------------------- */
 
-bool is_guidance_word(char *word) {
-	guidanceCommandPtr ptr;
-	for(ptr = guidance_cmd; ptr->guidance_command_name != NULL; ptr++) {
-		if(are_strings_equal(ptr->guidance_command_name, word)) {
+bool is_directive_word(char *word) {
+	directiveCommandPtr ptr;
+	for(ptr = directive_cmd; ptr->directive_command_name != NULL; ptr++) {
+		if(are_strings_equal(ptr->directive_command_name, word)) {
 			return true;
 		}
 	}
@@ -397,8 +400,8 @@ int set_operands_list(char *line, char **operands_ptr, reqOperands operands_num)
 	
 	for(i = 0; i < operands_num && !is_error(error_code); i++) {
         operands_ptr[i] = get_next_element(&line, COMMA_DELIMETER_STR);
-        if(!(strlen(operands_ptr[i]))) {
-            error_code = OPERAND_IS_NULL;
+        if(strlen(operands_ptr[i]) == EMPTY) {
+            error_code = OPERAND_IS_EMPTY;
         }
 	}
 
@@ -464,19 +467,54 @@ int check_operands_num(char *line, reqOperands operands_num) {
 
 int create_output_files(char *file_name, int icf, int dcf) {
 	int error_code = OK;
+	FILE *object_file, *external_file, *entry_file;
+	char *object_file_name = (char *)malloc(strlen(file_name) + strlen(OBJECT_FILE_EXT) + 1); /* need to see why more 1 */
+	char *entry_file_name = (char *)malloc(strlen(file_name) + strlen(ENTRY_FILE_EXT));
+	char *external_file_name = (char *)malloc(strlen(file_name) + strlen(EXTERN_FILE_EXT));
+	bool is_entry_file_needed = is_entry_list(), is_external_file_needed = is_external_list();
 
-	if(is_entry_list()) {
-		error_code = create_entry_file(file_name);
+	if(object_file_name == NULL || external_file_name == NULL || entry_file_name == NULL) {
+		error_code = MEMORY_ALLOCATION_FAILED;
 	}
+	else{
+			strcpy(object_file_name, file_name);
+    		strcat(object_file_name,OBJECT_FILE_EXT);
+			strcpy(entry_file_name, file_name);
+    		strcat(entry_file_name,ENTRY_FILE_EXT);
+			strcpy(external_file_name, file_name);
+    		strcat(external_file_name,EXTERN_FILE_EXT);
 
-	if(!is_error(error_code)) {
-		if(is_external_list()) {
-			error_code = create_external_file(file_name);
-		}
-	}
+ 
+			
+			if((object_file = fopen(object_file_name, "w")) == NULL) {
+					error_code = CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE;
+			}
+			else if((is_entry_file_needed) && ((entry_file = fopen(entry_file_name, "w")) == NULL)) {
+					error_code = CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE;
+			}
+			else if((is_external_file_needed) && ((external_file = fopen(external_file_name, "w")) == NULL)) {
+					error_code = CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE;
+			}
+			
+			free(object_file_name);
+			free(external_file_name);
+			free(entry_file_name);
 
-	if(!is_error(error_code)) {
-		error_code = create_object_file(file_name, icf, dcf);
+			if (error_code == OK) { 		
+				
+				print_object_file(object_file, icf, dcf);
+				fclose(object_file);
+				
+				if(is_entry_file_needed) {
+					print_entry_file(entry_file);
+					fclose(entry_file);
+				}
+
+				if(is_external_file_needed) {
+					print_external_file(external_file);
+					fclose(external_file);
+				}
+			}
 	}
 	
 	return error_code;
@@ -484,84 +522,36 @@ int create_output_files(char *file_name, int icf, int dcf) {
 
 /* ---------------------------------------- */
 
-int create_entry_file(char *file_name) {
-	int error_code = OK;
-	char *entry_file_name = (char *)malloc(strlen(file_name) + strlen(ENTRY_FILE_EXT));
-	FILE *entry_file;
+void print_entry_file(FILE *entry_file) {
+
 	entryNodePtr current_entry_ptr = NULL;
 
-	strcpy(entry_file_name, file_name);
-	strcat(entry_file_name,ENTRY_FILE_EXT);
+	for(current_entry_ptr = ent_head; current_entry_ptr != NULL; current_entry_ptr = current_entry_ptr -> next) {
+		fprintf(entry_file,"%s %04d\n", current_entry_ptr->symbol_name, current_entry_ptr->address);
+	}
 
-	if(entry_file_name) {
-		if((entry_file = fopen(entry_file_name, "w"))) {
-			for(current_entry_ptr = ent_head; current_entry_ptr != NULL; current_entry_ptr = current_entry_ptr -> next) {
-				fprintf(entry_file,"%s %04d\n", current_entry_ptr->symbol_name, current_entry_ptr->address);
-			}
-		}
-		else {
-			error_code = CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE;
-		}
-	}
-	else {
-		error_code = MEMORY_ALLOCATION_FAILED;
-	}
-	
-	return error_code;
 }
 
 /* ---------------------------------------- */
 
-int create_external_file(char *file_name) {
-	int error_code = OK;
-	char *external_file_name = (char *)malloc(strlen(file_name) + strlen(EXTERN_FILE_EXT));
-	FILE *external_file;
+void print_external_file(FILE *external_file) {
+
 	externalNodePtr current_external_ptr = NULL;
 	
-	if(external_file_name) {
-		strcpy(external_file_name, file_name);
-		strcat(external_file_name,EXTERN_FILE_EXT);
-
-		if((external_file = fopen(external_file_name, "w"))) {
-			for(current_external_ptr = ext_head; current_external_ptr != NULL; current_external_ptr = current_external_ptr -> next) {
-				fprintf(external_file,"%s %04d\n", current_external_ptr->symbol_name, current_external_ptr->address);
-			}
-		}
-		else {
-			error_code = CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE;
-		}
+	for(current_external_ptr = ext_head; current_external_ptr != NULL; current_external_ptr = current_external_ptr -> next) {
+		fprintf(external_file,"%s %04d\n", current_external_ptr->symbol_name, current_external_ptr->address);
 	}
-	else {
-		error_code = MEMORY_ALLOCATION_FAILED;
-	}
-	
-	return error_code;
 }
+
 
 /* ---------------------------------------- */
 
-int create_object_file(char *file_name, int icf, int dcf) {
-	int error_code = OK;
-	char *object_file_name = (char *)malloc(strlen(file_name) + strlen(EXTERN_FILE_EXT));
-	FILE *object_file;
-
-	if(object_file_name) {
-		strcpy(object_file_name, file_name);
-		strcat(object_file_name,OBJECT_FILE_EXT);
-		if((object_file = fopen(object_file_name, "w"))) {
-			fprintf(object_file, "%d %d\n", icf-MEMORY_STARTING_LOCATION, dcf); /* object file headline. */
-			print_code_image_to_file(object_file, icf);
-			print_data_image_to_file(object_file, icf ,dcf);
-		}
-		else {
-			error_code = CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE;
-		}
-	}
-	else {
-		error_code = MEMORY_ALLOCATION_FAILED;
-	}
-	return error_code;
+void print_object_file(FILE *object_file, int icf, int dcf) {
 	
+	fprintf(object_file, "%d %d\n", icf-MEMORY_STARTING_LOCATION, dcf); /* object file headline. */
+	print_code_image_to_file(object_file, icf);
+	print_data_image_to_file(object_file, icf ,dcf);
+
 }
 
 /* ---------------------------------------- */

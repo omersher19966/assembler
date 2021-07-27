@@ -1,0 +1,21 @@
+Important Notes:
+
+1. In my Assembler program, label is a word which its ending character is colon (':').
+words contain colon in the middel are not treated as label but as command. 
+
+for example: 
+Next:add is treated as a command (int this case unrecogmized command).
+
+------------------------------------------
+
+2. Parsing extermal commands is preformed before parsing entries commands. 
+This can cause to an error which a label given to extern command is defined before 
+the same label in entry command even if the entry command comes before the external command.
+
+for example: 
+.entry next
+.extern next 
+
+error : given label cannot be defined as entry symbol becayse it's already defined as external symbol.
+
+------------------------------------------

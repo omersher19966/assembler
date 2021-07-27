@@ -35,9 +35,10 @@ typedef struct symbolNode{
 /* Labels functions, label - a word before insertion to the symbol table */
 
 int					check_label(char *word, bool check_new_label, bool check_symbol_tabel);
+int    	  	check_valid_label(char *word);
 
 bool				is_new_label(char *word);
-bool    		is_valid_label(char *word);
+
 
 /* Symbols functions, symbol - a word after insertion to the symbol table. */
 

@@ -12,9 +12,7 @@ int check_label(char *word, bool check_new_label, bool check_symbol_table) {
 	}
 
 	if(!is_error(error_code)) {
-		if (!is_valid_label(word)){
-			error_code = INVALID_LABEL;
-		}
+		error_code = check_valid_label(word);
 	}
 	
 	if ((check_symbol_table) && (!is_error(error_code))) {
@@ -42,33 +40,33 @@ bool is_new_label(char *word) {
 
 /* ---------------------------------------- */
 
-bool is_valid_label(char *word) {
-	bool valid_label_flag;
+int check_valid_label(char *word) {
+	int error_code = OK;
 	int i = 0, 	max_label_length_without_suffix = MAX_LABEL_LENGTH - 1, current_label_length = strlen(word);
 
 	if (is_assembly_key_word(word)) {
-		valid_label_flag = false;
+		error_code = LABEL_IS_ASSEMBLY_KEYWORD;
 	}
 	else if (current_label_length > max_label_length_without_suffix) {
-		valid_label_flag = false;
+		error_code = ABOVE_MAX_LABEL;
 	}
 	else {
 		if (isalpha(word[i++])) {
 			for(;(isalnum(word[i])) && (i < current_label_length);i++)
 			;
 			if(i == current_label_length) {
-				valid_label_flag = true;
+				error_code = OK;
 			}
 			else {
-				valid_label_flag = false;
+				error_code = INVALID_LABEL;
 			}
 		}
 		else {
-			valid_label_flag = false;
+			error_code = INVALID_LABEL;
 		}
 	}
 
-	return valid_label_flag;
+	return error_code;
 }
 
 /* ---------------------------------------- */
