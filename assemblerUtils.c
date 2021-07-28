@@ -40,10 +40,10 @@ const char *assembly_keywords[] = {
 
 /* ---------------------------------------- */
 
-void print_error(int error_code, int file_num, char *word) {
+void print_error(int error_code, char *file_name, char *word) {
 	
 	if(global_error_flag == false) {
-		printf("------------- File %d Errors --------------\n", file_num);
+		printf("\n------------- %s - Errors -------------\n", file_name);
 	}
 	
 	if (error_code == MEMORY_ALLOCATION_FAILED || error_code == DATA_IMAGE_IS_FULL || error_code == CODE_IMAGE_IS_FULL) {
@@ -55,84 +55,84 @@ void print_error(int error_code, int file_num, char *word) {
 	switch(error_code) {
 		/* Assembler Error Code Messages */
 		case MEMORY_ALLOCATION_FAILED: 
-			printf("File %d: stopped processing the file due to lack of memory\n", file_num);
+			printf("Error: stopped processing the file due to lack of memory\n");
 			break;
 		case DATA_IMAGE_IS_FULL: 
-			printf("File %d: stopped processing the file because data image is full.\n", file_num);
+			printf("Error: stopped processing the file because data image is full.\n");
 			break;
 		case CODE_IMAGE_IS_FULL: 
-			printf("File %d: stopped processing the file because code image is full.\n", file_num);
+			printf("Error : stopped processing the file because code image is full.\n");
 			break;
 		case INVALID_NUMBER:
-			printf("File %d: line %d - the given operand is not a valid number.\n", file_num, lc);
+			printf("Error: line %d - the given operand is not a valid number.\n", lc);
 			break;
 		case INVALID_STRING:
-			printf("File %d: line %d - the given operand is not a valid string.\n", file_num, lc);
+			printf("Error: line %d - the given operand is not a valid string.\n", lc);
 			break;
 		case INVALID_CMD:
-			printf("File %d: line %d - unrecognized command <%s>.\n", file_num, lc, word);
+			printf("Error: line %d - unrecognized command <%s>.\n", lc, word);
 			break;
 		case INVALID_REGISTER:
-			printf("File %d: line %d - the given operand is not a valid register.\n", file_num, lc);
+			printf("Error: line %d - the given operand is not a valid register.\n", lc);
 			break;
 		/* others */
 		case ABOVE_MAX_LINE:
-			printf("File %d: line %d - the length of line is above max(%d).\n", file_num, lc, MAX_LINE);
+			printf("Error: line %d - the length of line is above max(%d).\n", lc, MAX_LINE);
 			break;
 		case NO_GIVEN_OPERANDS:
-			printf("File %d: line %d - operands were not given for the command.\n", file_num, lc);
+			printf("Error: line %d - operands were not given for the command.\n", lc);
 			break;
 		case GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED:
-			printf("File %d: line %d - given operands are less than required.\n", file_num, lc);
+			printf("Error: line %d - given operands are less than required.\n", lc);
 			break;
 		case GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED:
-			printf("File %d: line %d - given operands are more then required.\n", file_num, lc);
+			printf("Error: line %d - given operands are more then required.\n", lc);
 			break;
 		case INVALID_OPERANDS_LINE:
-			printf("File %d: line %d - line is not valid due to comma character in the end of the line.\n", file_num, lc);
+			printf("Error: line %d - line is not valid due to comma character in the end of the line.\n", lc);
 			break;
 		case INVALID_OPERAND:
-			printf("File %d: line %d - the given operand is not valid.\n", file_num, lc);
+			printf("Error: line %d - the given operand is not valid.\n", lc);
 			break;
 		case OPERAND_IS_EMPTY:
-			printf("File %d: line %d - empty operand in line.\n", file_num, lc);
+			printf("Error: line %d - empty operand in line.\n", lc);
 			break;
 		case EXTERNAL_SYMBOL_CANNOT_BE_USED_IN_BRANCHING_COMMAND:
-			printf("File %d: line %d - external label cannot be used in branching command, only entry label is allowed.\n", file_num, lc);
+			printf("Error: line %d - external label cannot be used in branching command, only entry label is allowed.\n", lc);
 			break;
 		case CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE:
-			printf("File %d: could not create or write to the externals file.\n", file_num);
+			printf("Error: could not create or write to the externals file.\n");
 			break;
 		case CANNOT_CREATE_OR_WRITE_TO_ENTRY_FILE:
-			printf("File %d: could not create or write to the entries file.\n", file_num);
+			printf("Error: could not create or write to the entries file.\n");
 			break;
 		case CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE:
-			printf("File %d: could not create or write to the object file.\n", file_num);
+			printf("Error: could not create or write to the object file.\n");
 			break;
 		/* Label/Symbol Error Codes */ 
 		case INVALID_LABEL:
-			printf("File %d: line %d - not a valid label <%s>.\n", file_num, lc, word);
+			printf("Error: line %d - not a valid label <%s>.\n", lc, word);
 			break;
 		case ABOVE_MAX_LABEL:
-			printf("File %d: line %d - label is above max label length(%d).\n", file_num, lc, MAX_LABEL_LENGTH);
+			printf("Error: line %d - label is above max label length(%d).\n", lc, MAX_LABEL_LENGTH);
 			break;
 		case LABEL_IS_ASSEMBLY_KEYWORD:
-			printf("File %d: line %d - label is assembly keyword, cannot be used.\n", file_num, lc);
+			printf("Error: line %d - label is assembly keyword, cannot be used.\n", lc);
 			break;
 		case LABEL_HAS_ALREADY_BEEN_USED:
-			printf("File %d: line %d - label <%s> has already been defined in previous lines.\n", file_num, lc, word);
+			printf("Error: line %d - label <%s> has already been defined in previous lines.\n", lc, word);
 			break;
 		case SYMBOL_IS_NOT_DEFINED:
-			printf("File %d: line %d - given label is not defined.\n", file_num, lc);
-			break;
-		case SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY:
-			printf("File %d: line %d - given label cannot be defined as external symbol because it's already defined as entry symbol.\n", file_num, lc);
+			printf("Error: line %d - given label is not defined.\n", lc);
 			break;
 		case SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL:
-			printf("File %d: line %d - given label cannot be defined as entry symbol becayse it's already defined as external symbol.\n", file_num, lc);
+			printf("Error: line %d - given label is defined as external label, cannot be defined as entry label in the same file.\n", lc);
+			break;
+		case SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY:
+			printf("Error: line %d - given label is defined as label symbol, cannot be defined as external label in the same file.\n", lc);
 			break;
 		default:
-			printf("File %d: line %d - %d\n", file_num, lc, error_code);
+			printf("Error: line %d - %d\n", lc, error_code);
 			break;			 	      	
 	}
 }
@@ -142,8 +142,7 @@ void print_error(int error_code, int file_num, char *word) {
 int check_assembly_extension(char *path) {
 	int error_code;
 	char *suffix_ptr;
-	
-	if ((suffix_ptr = strstr(path, ASSEMBLY_FILE_EXT)) && (*(suffix_ptr + EXTENSION_LENGTH) == EOS)){
+	if ((suffix_ptr = strstr(path, ASSEMBLY_FILE_EXT)) && (*(suffix_ptr + strlen(ASSEMBLY_FILE_EXT)) == EOS)){
 		error_code = OK;
 	}
 	else {
@@ -168,7 +167,7 @@ bool is_valid_number(char *operand) {
 	
 	for(;isspace(*operand); operand++)
 	; 
-	if ((*operand == NEGATIVE_SIGN) || (*operand == POSITIVE_NUMBER)) {
+	if ((*operand == NEGATIVE_SIGN) || (*operand == POSITIVE_SIGN)) {
 		operand++;
 	}
 	for(;isdigit(*operand) && *operand != EOS; operand++)
@@ -234,7 +233,7 @@ bool is_empty_line(char *line) {
 
 /* ---------------------------------------- */
 
-bool is_assembly_key_word(char *word) {
+bool is_assembly_keyword(char *word) {
 	 char **keyword; 
 	for(keyword = (char **)assembly_keywords; *keyword != NULL; keyword++) {
 		if(are_strings_equal(*keyword, word)) {
@@ -300,7 +299,7 @@ char *get_next_element(char **line, char *delimeters) {
 /* ---------------------------------------- */
 
 bool is_comment(char *word) {
-	return *word == COMMENT ? true : false;
+	return *word == COMMENT_CHAR ? true : false;
 }
 
 /* ---------------------------------------- */
@@ -330,10 +329,10 @@ int get_num_of_elements(char *line, char *delimeters) {
 /* ---------------------------------------- */
 
 bool is_error(int error_code) {
-	if(error_code == OK) {
-		return false;
+	if(error_code != OK) {
+		return true;
 	}
-	return true;
+	return false;
 }
 
 /* ---------------------------------------- */

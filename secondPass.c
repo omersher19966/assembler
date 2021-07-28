@@ -2,9 +2,9 @@
 
 /* ---------------------------------------- */
 
-void assembler_second_pass(FILE *fp, int file_num) { 
+void assembler_second_pass(FILE *fp, char* file_name) { 
 
-	char *allocated_line = (char *) malloc(MAX_LINE), *line , *word = NULL;
+	char *allocated_line = (char *) malloc(MAX_LINE * sizeof(char)), *line , *word = NULL;
 	int error_code = OK;
 	
 	/* reset previous indexes. */
@@ -20,7 +20,7 @@ void assembler_second_pass(FILE *fp, int file_num) {
 
 			if(is_error(error_code = check_line(line))) {
 				if(error_code == MEMORY_ALLOCATION_FAILED) {
-					print_error(error_code, file_num, NULL);
+					print_error(error_code, file_name, NULL);
 				}
 				else if(error_code == ABOVE_MAX_LINE) {
 					start_new_line(fp);
@@ -36,12 +36,12 @@ void assembler_second_pass(FILE *fp, int file_num) {
 				if(!(is_directive_word(word) || is_extern_word(word))) {
 					if(is_entry_word(word)){
 						if(is_error(error_code = parse_entry_sentence(line))) {
-							print_error(error_code, file_num, word);
+							print_error(error_code, file_name, word);
 						}
 					}
 					else { /* command_sentence */
 						if(is_error(error_code = complete_command_data(line, word))) {
-							print_error(error_code, file_num,word);
+							print_error(error_code, file_name,word);
 						} 
 					}
 				}
@@ -49,7 +49,7 @@ void assembler_second_pass(FILE *fp, int file_num) {
 		}
 	}
 	else {
-		print_error(MEMORY_ALLOCATION_FAILED, file_num, NULL);
+		print_error(MEMORY_ALLOCATION_FAILED, file_name, NULL);
 	}
 	free(allocated_line);
 	return;
@@ -171,7 +171,7 @@ int add_symbol_to_entry_list(symbolPtr symbol) {
 	entryNodePtr head = ent_head;
 	entryNodePtr new_ent_node_ptr = (entryNodePtr)malloc(sizeof(entryNode)), current_ent_node_ptr;
 
-	new_ent_node_ptr->symbol_name = (char *)malloc(strlen(symbol->name));
+	new_ent_node_ptr->symbol_name = (char *)malloc(strlen(symbol->name) * sizeof(char));
 
 	if(new_ent_node_ptr && new_ent_node_ptr->symbol_name){
 		strcpy(new_ent_node_ptr->symbol_name, symbol->name);

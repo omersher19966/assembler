@@ -2,9 +2,9 @@
 
 /* ---------------------------------------- */
 
-void assembler_first_pass(FILE *fp, int file_num) {
+void assembler_first_pass(FILE *fp, char* file_name) {
 	
-	char *word = NULL, *label = NULL, *allocated_line = (char *) malloc(MAX_LINE), *line; /* need to handle malloc */
+	char *word = NULL, *label = NULL, *allocated_line = (char *) malloc(sizeof(char) * MAX_LINE), *line; /* need to handle malloc */
 	bool is_label;
 	int error_code = OK;
 	
@@ -23,7 +23,7 @@ void assembler_first_pass(FILE *fp, int file_num) {
 					if (error_code == ABOVE_MAX_LINE) {
 						start_new_line(fp);
 					}
-					print_error(error_code, file_num, NULL);
+					print_error(error_code, file_name, NULL);
 				}
 			}
 			else {
@@ -34,7 +34,7 @@ void assembler_first_pass(FILE *fp, int file_num) {
 					if(!is_error(error_code)) {
 						is_label = true;					}
 					else {
-						print_error(error_code, file_num, word);
+						print_error(error_code, file_name, word);
 					}
 					label = word;
 					word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
@@ -44,10 +44,15 @@ void assembler_first_pass(FILE *fp, int file_num) {
 
 				if(is_directive_word(word)) {
 					if(is_label) {
-						add_symbol_to_table(label, false, true, false, false);
+						error_code = add_symbol_to_table(label, false, true, false, false);
 					}
-					if(is_error(error_code = parse_directive_sentence(line, word))){
-						print_error(error_code, file_num, NULL);
+					if(error_code == OK) {
+						if(is_error(error_code = parse_directive_sentence(line, word))){
+							print_error(error_code, file_name, NULL);
+						}
+					}
+					else{
+						print_error(error_code, file_name, NULL);
 					}
 				}
 				else if(is_entry_word(word)){
@@ -55,25 +60,30 @@ void assembler_first_pass(FILE *fp, int file_num) {
 				}
 				else if(is_extern_word(word)){
 					if (is_error(error_code = parse_extern_sentence(line))) {
-						print_error(error_code, file_num, NULL);
+						print_error(error_code, file_name, NULL);
 					}
 				}
 				else if(is_command_word(word)) {
 					if(is_label) {
-						add_symbol_to_table(label, true, false, false, false);
+						error_code = add_symbol_to_table(label, true, false, false, false);
 					}
-					if (is_error(error_code = parse_command_sentence(line, word))) {
-						print_error(error_code, file_num, NULL );
-					}		
+					if(error_code == OK) {
+						if (is_error(error_code = parse_command_sentence(line, word))) {
+							print_error(error_code, file_name, NULL);
+						}
+					}
+					else {
+						print_error(error_code, file_name, NULL);
+					}			
 				}
 				else {
-					print_error(error_code = INVALID_CMD,file_num, word);
+					print_error(INVALID_CMD,file_name, word);
 				}
 			}
 		}
 	}
 	else {
-		print_error(MEMORY_ALLOCATION_FAILED, file_num, NULL);
+		print_error(MEMORY_ALLOCATION_FAILED, file_name, NULL);
 	}
 	
 	free(allocated_line);
@@ -92,10 +102,10 @@ int parse_extern_sentence(char *line) {
 		element = get_next_element(&line, COMMA_DELIMETER_STR);
 		if((error_code = check_label(element, false, false)) == OK) {
 			if ((symbol = get_symbol_from_table(element)) == NULL) {
-				add_symbol_to_table(element, false, true, false, true);
+				error_code = add_symbol_to_table(element, false, true, false, true);
 			}
 			else {
-				if ((symbol->attributes.entry = true)) {
+				if ((symbol->attributes.entry == true)) {
 					error_code = SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY;
 				}
 			}
@@ -150,15 +160,15 @@ int parse_directive_sentence(char *line, char *word) {
 	if (is_empty_line(line)) {
 		error_code = NO_GIVEN_OPERANDS;
 	}
-	else if(!(are_strings_equal(word, ASCIZ))){ /* parse db,dh,dw directive commands. */
-		if(are_strings_equal(word, DB)) { 
-			jmp = DB_JMP; 
+	else if(!(are_strings_equal(word, ASCIZ_COMMAND))){ /* parse db,dh,dw directive commands. */
+		if(are_strings_equal(word, DB_COMMAND)) { 
+			jmp = DB_SIZE; 
 		}
-		else if(are_strings_equal(word, DH)) {
-			jmp = DH_JMP;
+		else if(are_strings_equal(word, DH_COMMAND)) {
+			jmp = DH_SIZE;
 		}
 		else {
-			jmp = DW_JMP;
+			jmp = DW_SIZE;
 		}
 		for(element = get_next_element(&line, COMMA_DELIMETER_STR); element != NULL && !is_error(error_code); element = get_next_element(&line, COMMA_DELIMETER_STR)) {
 			strcpy(operand, element);
@@ -332,10 +342,10 @@ int parse_asciz_command(char *line) {
 		if(is_valid_string(operand)){
 			len = strlen(operand) - 1;
 			for(index = 1; index < len; index++) {
-				error_code = add_to_data_image(element[index], CHAR_JMP);
+				error_code = add_to_data_image(element[index], DB_SIZE);
 			}
 			if(!is_error(error_code)) {
-				error_code = add_to_data_image(EOS, CHAR_JMP);
+				error_code = add_to_data_image(EOS, DB_SIZE);
 			}
 		}
 		else {

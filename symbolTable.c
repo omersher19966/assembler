@@ -1,3 +1,5 @@
+/* symbol table explanation - binary tree */
+
 #include "symbol.h"
 
 symbolPtr root = NULL;
@@ -5,6 +7,7 @@ symbolPtr root = NULL;
 /* ---------------------------------------- */
 
 int check_label(char *word, bool check_new_label, bool check_symbol_table) {
+	
 	int error_code = OK;
 	
 	if (check_new_label && (!is_new_label(word))) {
@@ -44,7 +47,7 @@ int check_valid_label(char *word) {
 	int error_code = OK;
 	int i = 0, 	max_label_length_without_suffix = MAX_LABEL_LENGTH - 1, current_label_length = strlen(word);
 
-	if (is_assembly_key_word(word)) {
+	if (is_assembly_keyword(word)) {
 		error_code = LABEL_IS_ASSEMBLY_KEYWORD;
 	}
 	else if (current_label_length > max_label_length_without_suffix) {
@@ -108,40 +111,46 @@ symbolPtr get_symbol_from_table(char *symbol_name) {
 
 /* ---------------------------------------- */
 
-void add_symbol_to_table(char *symbol_name, bool code, bool data, bool entry, bool external) {
-	
-	symbolPtr new_symbol = create_new_symbol(symbol_name, data, code, entry, external); /* need to handle malloc */
+int add_symbol_to_table(char *symbol_name, bool code, bool data, bool entry, bool external) {
+	int error_code = OK;
+	symbolPtr new_symbol = create_new_symbol(symbol_name, data, code, entry, external);
 	symbolPtr current_symbol;
 	
-	if(root == NULL) {
-		root = new_symbol;
-	}
-	else {
+	if(new_symbol != NULL) {
+		if(root == NULL) {
+			root = new_symbol;
+		}
+		else {
+			
+			current_symbol = root;
 		
-		current_symbol = root;
-	
-		while(current_symbol) {
-			if (strcmp(new_symbol->name, current_symbol->name) > 0) {
-				if(current_symbol->right == NULL) {
-					current_symbol->right = new_symbol;
-					break;
+			while(current_symbol) {
+				if (strcmp(new_symbol->name, current_symbol->name) > 0) {
+					if(current_symbol->right == NULL) {
+						current_symbol->right = new_symbol;
+						break;
+					}
+					else {
+						current_symbol = current_symbol->right;
+					}
 				}
 				else {
-					current_symbol = current_symbol->right;
-				}
+					if(current_symbol->left == NULL) {
+						current_symbol->left = new_symbol;
+						break;
+					}
+					else {
+						current_symbol = current_symbol->left;
+					}
+				}	
 			}
-			else {
-				if(current_symbol->left == NULL) {
-					current_symbol->left = new_symbol;
-					break;
-				}
-				else {
-					current_symbol = current_symbol->left;
-				}
-			}	
 		}
 	}
-	return;
+	else {
+		error_code = MEMORY_ALLOCATION_FAILED;
+	}
+
+	return error_code;
 }
 
 
@@ -150,23 +159,24 @@ void add_symbol_to_table(char *symbol_name, bool code, bool data, bool entry, bo
 symbolPtr create_new_symbol(char *symbol_name, bool data, bool code, bool entry, bool external) {
 	
 	symbolPtr new_symbol = (symbolPtr)malloc(sizeof(symbolNode));
-
-	strcpy(new_symbol->name, symbol_name);
-	if (external) {
-		new_symbol->value = 0;
+	if(new_symbol != NULL) {
+		strcpy(new_symbol->name, symbol_name);
+		if (external) {
+			new_symbol->value = 0;
+		}
+		else if(code) {
+			new_symbol->value = ic;
+		} else {
+			new_symbol->value = dc;
+		}
+		new_symbol->attributes.code = code;
+		new_symbol->attributes.data = data;
+		new_symbol->attributes.entry = entry;
+		new_symbol->attributes.external = external;
+		new_symbol->left = NULL;
+		new_symbol->right = NULL;
 	}
-	else if(code) {
-		new_symbol->value = ic;
-	} else {
-		new_symbol->value = dc;
-	}
-	new_symbol->attributes.code = code;
-	new_symbol->attributes.data = data;
-	new_symbol->attributes.entry = entry;
-	new_symbol->attributes.external = external;
-	new_symbol->left = NULL;
-	new_symbol->right = NULL;
-
+	
 	return new_symbol;
 }
 

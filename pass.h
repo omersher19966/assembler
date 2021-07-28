@@ -5,34 +5,63 @@
 
     #define PASS_H
 
-    /* ------------ Macros ------------ */
+/* ----------------------------- */
+/*  Macros  */
+/* ----------------------------- */
+    
+    /* Directive Commands */
+    
+    #define DB_COMMAND ".db"
+    #define DH_COMMAND ".dh"
+    #define DW_COMMAND ".dw"
+    #define ASCIZ_COMMAND ".asciz"
+    #define EXTERN_COMMAND  ".extern" /* Used for detecting extern command */
+    #define ENTRY_COMMAND   ".entry"/* Used for detecting entry command */
+
+
+    /* Data Size For Directive Commands */
+    #define DB_SIZE 1 /* 1 Byte Size */
+    #define DH_SIZE 2 /* 2 Byte Size */
+    #define DW_SIZE 4 /* 4 Byte Size */
+
+    
+    /* Available Operands For Instruction Commands */
 
     #define FIRST_OPERAND 0
     #define SECOND_OPERAND 1
     #define THIRD_OPERAND 2
 
-    #define EXTERN_DECLARATION  ".extern"
-    #define ENTRY_DECLARATION   ".entry"
+/* ----------------------------- */
+/* New Types */
+/* ----------------------------- */
 
-    #define DB ".db"
-    #define DH ".dh"
-    #define DW ".dw"
-    #define ASCIZ ".asciz"
-
-    #define CHAR_JMP 1
-    #define DB_JMP 1
-    #define DH_JMP 2
-    #define DW_JMP 4
-
-    #define CODE_IMAGE_JMP 4
-
-    /* ------------New Types ------------ */
+   /* 
+   typedef: reqOperands
+   --------------------
+   Represents the required operands number data for each instruction command.
+   */
 
     typedef enum{NO_OPERANDS , ONE_OPERAND, TWO_OPERANDS, THREE_OPERANDS, NOT_CONSTANT} reqOperands; /* stands for requiredOperands */
 
+   /* 
+   typedef: insturctionType.
+   --------------------
+   Represents instructionType enumeration.
+   
+   enum instructinoGroupType - represents all different instruction types (r, i, j).
+   */ 
+    
     typedef enum{INSTRUCTION_R, INSTRUCTION_I, INSTRUCTION_J} instructionType;
 
-    typedef enum{ 
+   /* 
+   typedef: instructionGroupType
+   --------------------
+   Represents instructionGroupType enumeration.
+   
+   enum instructinoGroupType - represents the instruction group type for all instruction different types.
+   */ 
+    
+    typedef enum instructionGroupType{ 
         ARITHMETIC_R_INSTRUCTIONS, 
         COPY_R_INSTRUCTIONS,
         ARITHMETIC_I_INSTRUCTIONS,
@@ -42,12 +71,31 @@
         LA,
         CALL,
         STOP} instructionGroupType;
+   
+   /* 
+   typedef: dataType
+   --------------------
+   Represents the stored data size in directiveData struct.
+   */
+    
+    typedef enum{BYTE = 1, HALF_WORD = 2, WORD = 4} dataType;
 
+   /* 
+   typedef: instruction
+   --------------------
+   Represents instruction structure.
+    
+   instruction struct - represents a binary machine insturction.
+   value: instruction address.
+   type: instruction type (r, i, j).
+   instruction_fmt: conatin the binary instruction according to the insturction type format.
+   */
+    
     typedef struct instruction { 
         instructionType type;
         int value;
         union {
-            struct {
+            struct { /* instruction r format */
                 unsigned unused: 6;
                 unsigned funct: 5;
                 unsigned rd: 5;
@@ -56,14 +104,14 @@
                 unsigned opcode: 6;
 
             } instruction_r;
-            struct {
+            struct { /* instruction i format */
                 unsigned immed: 16;
                 unsigned rt: 5;
                 unsigned rs: 5;
                 unsigned opcode: 6;
 
             } instruction_i;
-            struct {
+            struct { /* instruction j format */
                 unsigned address: 25;
                 unsigned reg: 1;
                 unsigned opcode: 6;
@@ -71,6 +119,19 @@
         } instruction_fmt;
     } instruction;
 
+   /* 
+   typedef: command
+   --------------------
+   Represents command structure.
+    
+   command struct - represents an instruction command in Assembly.
+   opcode: command's opcode value.
+   funct: command's funct value.
+   operands_num: command's required operands number.
+   instruction_type - instruction type (r, i, j).
+   instruction_group - the instructions group which the command is part of.
+   */
+    
     typedef struct command {
         char *commmad_name;
         int opcode;
@@ -81,10 +142,20 @@
         
     } command;
 
-    typedef enum{BYTE = 1, HALF_WORD = 2, WORD = 4} dataType;
+   /* 
+   typedef: directiveData
+   --------------------
+   Represents directiveData structure.
+    
+   directiveData struct - represents values stored in the data image.
+   address: the address where the value was defined.
+   type: the value size in bytes. 
+   data_fmt: the actual value stored according to the value size (byte, half-word, word).
+   next - pointers to the next entry symbol in the entry list.
+   */
 
     typedef struct directiveData {
-        int value;
+        int address;
         dataType type;
         union {
             struct {
@@ -99,19 +170,49 @@
         } data_fmt;
     } directiveData;
 
+   /* 
+   typedef: externalNodePtr
+   --------------------
+   Represents externalNode structure ptr.
+   */ 
+
     typedef struct externalNode * externalNodePtr;
     
+   /* 
+   typedef: externalNode
+   --------------------
+   Represents externalNode structure in the external symbols list(linked list).
     
+   externalNode struct - represents an external symbol in the external list.
+   address: entry symbol address.
+   symbol_name: symbol name.
+   next - pointers to the next entry symbol in the entry list.
+   */
+
     typedef struct externalNode {
         int address;
         char *symbol_name;
         externalNodePtr next;
     } externalNode;
 
-
+   /* 
+   typedef: entryNodePtr
+   --------------------
+   Represents entryNode structure ptr.
+   */ 
     typedef struct entryNode * entryNodePtr;
     
+   /* 
+   typedef: entryNode
+   --------------------
+   Represents entryNode structure in the entry symbols list(linked list).
     
+   entryNode struct - represents an entry symbol in the entry list.
+   address: entry symbol address.
+   symbol_name: symbol name.
+   next - pointers to the next entry symbol in the entry list.
+   */
+
     typedef struct entryNode {
         int address;
         char *symbol_name;
@@ -119,8 +220,9 @@
     } entryNode;
 
 
-
-    /* ------------ External Variabels ------------ */
+/* ----------------------------- */
+/* External Variabels */
+/* ----------------------------- */
 
     extern int ic, dc, lc;
     extern instruction code_image[];
@@ -129,9 +231,12 @@
     extern externalNodePtr ext_head;
     extern entryNodePtr ent_head;
 
-    /* ------------ Functions ------------ */
-    
-    void    pass(FILE *fp, char *file_name, int file_num);
+/* ----------------------------- */
+/* Functions */
+/* ----------------------------- */
+
+    /* ----- Pass ----- */ 
+    void    pass(FILE *fp, char *file_name);
 
     void    print_code_image_to_file(FILE *object_file ,int icf);
     void    print_data_image_to_file(FILE *object_file ,int icf, int dcf);
@@ -167,7 +272,7 @@
 
     /* ----- First pass ----- */ 
     
-    void    assembler_first_pass(FILE *fp, int file_num);
+    void    assembler_first_pass(FILE *fp, char *file_name);
     
     void    set_arithmetic_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
     void    set_copy_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
@@ -190,7 +295,7 @@
 
     /* ----- Second Pass ----- */ 
     
-    void    assembler_second_pass(FILE *fp, int file_num);
+    void    assembler_second_pass(FILE *fp, char *file_name);
 
     int     parse_entry_sentence(char *line);
     int     complete_command_data(char *line, char *word);

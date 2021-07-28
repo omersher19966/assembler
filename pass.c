@@ -61,41 +61,49 @@ const char * directive_cmd[] = {
 static unsigned long get_required_bits(int bytes);
 static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp);
 
-
 /* ---------------------------------------- */
 
-void pass(FILE *fp, char *file_name, int file_num) {
+void pass(FILE *fp, char *file_name) {
 	
 	int error_code = OK, icf, dcf;
+	char *original_file_name = (char *)malloc(strlen(file_name) * sizeof(char));
 	
-	assembler_first_pass(fp, file_num);
-				
-	if(global_error_flag) {
-		printf("Assembler: files have not been created because of error(s).\n");
-		return;
+	if(original_file_name != NULL) {
+		
+		assembler_first_pass(fp, file_name);
+					
+		if(global_error_flag) {
+			printf("Assembler: files have not been created because of error(s).\n");
+			return;
+		}
+
+		icf = ic;
+		dcf = dc;
+					
+		/* setup for second pass */
+		rewind(fp);
+		update_symbol_table(icf);
+		update_data_image(icf);
+
+		/* second pass */
+		assembler_second_pass(fp, file_name);
+					
+
+		if(global_error_flag) {
+			printf("Assembler: files have not been created because of error(s).\n");
+			return;
+		}
+		
+		strcpy(original_file_name,file_name);
+		remove_file_extension(file_name);
+		if(is_error(error_code = create_output_files(file_name, icf, dcf))) {
+			print_error(error_code, original_file_name, NULL);
+			printf("Assembler: files have not been created because of error(s).\n");
+		}
+		free(original_file_name);
 	}
-
-	icf = ic;
-	dcf = dc;
-				
-	/* setup for second pass */
-	rewind(fp);
-	update_symbol_table(icf);
-	update_data_image(icf);
-
-	/* second pass */
-	assembler_second_pass(fp, file_num);
-				
-
-	if(global_error_flag) {
-		printf("Assembler: files have not been created because of error(s).\n");
-		return;
-	}
-
-	remove_file_extension(file_name);
-	if(is_error(error_code = create_output_files(file_name, icf, dcf))) {
-		print_error(error_code, file_num, NULL);
-		printf("Assembler: files have not been created because of error(s).\n");
+	else {
+		print_error(MEMORY_ALLOCATION_FAILED, file_name, NULL);
 	}
 
 	return;
@@ -283,7 +291,7 @@ void reset_counters_indexes(){
 void update_data_image(int icf) {
 	int index;
 	for(index = 0; index < data_image_index; index++) {
-		data_image[index].value += icf;
+		data_image[index].address += icf;
 	}
 	return;
 }
@@ -316,13 +324,13 @@ bool is_directive_word(char *word) {
 /* ---------------------------------------- */
 
 bool is_entry_word(char *word) {
-	return are_strings_equal(word, ENTRY_DECLARATION);
+	return are_strings_equal(word, ENTRY_COMMAND);
 }
 
 /* ---------------------------------------- */
 
 bool is_extern_word(char *word) {
-	return are_strings_equal(word, EXTERN_DECLARATION);
+	return are_strings_equal(word, EXTERN_COMMAND);
 }
 
 /* ---------------------------------------- */
@@ -361,7 +369,7 @@ int add_instruction_to_code_image (instruction *instruction_ptr) {
 	}
 	else {
 		instruction_ptr->value = ic;
-		ic += CODE_IMAGE_JMP;
+		ic += MACHINE_INSTRUCTIONS_SIZE;
 		code_image[code_image_index++] = *(instruction_ptr);
 	}
 	return error_code;
@@ -376,11 +384,11 @@ int add_to_data_image(long num, int jmp) {
 	}
 	else {
 
-		if(jmp == CHAR_JMP || jmp == DB_JMP) {
+		if(jmp == DB_SIZE) {
 			data_image[data_image_index].type = BYTE;
 			data_image[data_image_index].data_fmt.byte.data = num; 
 		}
-		else if(jmp == DH_JMP) {
+		else if(jmp == DH_SIZE) {
 			data_image[data_image_index].type = HALF_WORD;
 			data_image[data_image_index].data_fmt.half_word.data = num; 
 		}
@@ -389,7 +397,7 @@ int add_to_data_image(long num, int jmp) {
 			data_image[data_image_index].data_fmt.word.data = num; 
 		}
 
-		data_image[data_image_index].value = dc;
+		data_image[data_image_index].address = dc;
 
 		data_image_index++;
 		dc += jmp;
@@ -419,7 +427,7 @@ int set_operands_list(char *line, char **operands_ptr, reqOperands operands_num)
 int check_line(char *line) {
 
 	int error_code = OK, last_char_index = strlen(line) - 1;
-	char *copied_line = (char *)malloc(MAX_LINE), *line_ptr, *element;
+	char *copied_line = (char *)malloc(MAX_LINE * sizeof(char)), *line_ptr, *element;
 	
 	if (!copied_line) {
 		error_code = MEMORY_ALLOCATION_FAILED;
@@ -472,25 +480,26 @@ int check_operands_num(char *line, reqOperands operands_num) {
 
 int create_output_files(char *file_name, int icf, int dcf) {
 	int error_code = OK;
+	char *entry_file_name, *external_file_name, *object_file_name;
 	FILE *object_file, *external_file, *entry_file;
-	char *object_file_name = (char *)malloc(strlen(file_name) + strlen(OBJECT_FILE_EXT) + 1); /* need to see why more 1 */
-	char *entry_file_name = (char *)malloc(strlen(file_name) + strlen(ENTRY_FILE_EXT));
-	char *external_file_name = (char *)malloc(strlen(file_name) + strlen(EXTERN_FILE_EXT));
 	bool is_entry_file_needed = is_entry_list(), is_external_file_needed = is_external_list();
+
+	object_file_name = (char *)calloc(strlen((file_name) + strlen(OBJECT_FILE_EXT)), sizeof(char));
+	external_file_name = (char *)calloc((strlen(file_name) + strlen(EXTERN_FILE_EXT)), sizeof(char));
+	entry_file_name = (char *)calloc((strlen(file_name) + strlen(EXTERN_FILE_EXT)), sizeof(char));
 
 	if(object_file_name == NULL || external_file_name == NULL || entry_file_name == NULL) {
 		error_code = MEMORY_ALLOCATION_FAILED;
 	}
 	else{
+
 			strcpy(object_file_name, file_name);
     		strcat(object_file_name,OBJECT_FILE_EXT);
 			strcpy(entry_file_name, file_name);
     		strcat(entry_file_name,ENTRY_FILE_EXT);
 			strcpy(external_file_name, file_name);
     		strcat(external_file_name,EXTERN_FILE_EXT);
-
  
-			
 			if((object_file = fopen(object_file_name, "w")) == NULL) {
 					error_code = CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE;
 			}
@@ -501,9 +510,7 @@ int create_output_files(char *file_name, int icf, int dcf) {
 					error_code = CANNOT_CREATE_OR_WRITE_TO_EXTERN_FILE;
 			}
 			
-			free(object_file_name);
-			free(external_file_name);
-			free(entry_file_name);
+
 
 			if (error_code == OK) { 		
 				
@@ -526,7 +533,6 @@ int create_output_files(char *file_name, int icf, int dcf) {
 }
 
 /* ---------------------------------------- */
-
 void print_entry_file(FILE *entry_file) {
 
 	entryNodePtr current_entry_ptr = NULL;
