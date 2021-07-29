@@ -21,6 +21,7 @@
     #define INVALID_STRING 6 
     #define INVALID_CMD 7 
     #define INVALID_REGISTER 8 
+    #define NOT_IN_REGISTERS_RANGE 9
 
     /* Pass Errors */
     #define ABOVE_MAX_LINE 10  

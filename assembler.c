@@ -1,7 +1,9 @@
 #include "assemblerData.h"
 #include "pass.h"
 
-
+/* Global Error flags - 
+   used for detecting errors occasions.
+*/
 bool global_error_flag = false;
 bool global_memory_flag = false;
 
@@ -20,7 +22,7 @@ int main(int argc, char *argv[]) {
 	else {
 
 		for(file_index = 0 ,index = 1; index <= argc; index++) {
-			if (is_error(check_assembly_extension(argv[index]))) {
+			if (is_valid_assembly_extension(argv[index]) == false) {
 				printf("\nAssembler: %s has invalid extension. the file will not be parsed.\n", argv[index]);
 			}
 			else {

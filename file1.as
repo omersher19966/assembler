@@ -1,5 +1,3 @@
-;file ps.as
-;sample source code
 
 .entry Next
 .extern wNumber

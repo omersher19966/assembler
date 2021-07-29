@@ -75,6 +75,9 @@ void print_error(int error_code, char *file_name, char *word) {
 		case INVALID_REGISTER:
 			printf("Error: line %d - the given operand is not a valid register.\n", lc);
 			break;
+		case NOT_IN_REGISTERS_RANGE:
+			printf("Error: line %d - the given operand is not in the valid registers range(%d-%d).\n", lc, START_REGISTER, END_REGISTER);
+			break;
 		/* others */
 		case ABOVE_MAX_LINE:
 			printf("Error: line %d - the length of line is above max(%d).\n", lc, MAX_LINE);
@@ -138,17 +141,16 @@ void print_error(int error_code, char *file_name, char *word) {
 }
 
 /* ---------------------------------------- */
-/* need to change it later */
-int check_assembly_extension(char *path) {
-	int error_code;
+
+bool is_valid_assembly_extension(char *path) {
+	
 	char *suffix_ptr;
+	
 	if ((suffix_ptr = strstr(path, ASSEMBLY_FILE_EXT)) && (*(suffix_ptr + strlen(ASSEMBLY_FILE_EXT)) == EOS)){
-		error_code = OK;
+		return true;
 	}
-	else {
-		error_code = INVALID_EXTENSION;
-	}
-	return error_code;
+	
+	return false;
 }
 
 /* ---------------------------------------- */
@@ -186,7 +188,7 @@ int check_register(char *operand) {
 		if (is_valid_number(operand)){
 			register_num = atoi(operand);
 			if ((register_num < START_REGISTER) || (register_num > END_REGISTER)) {
-				error_code = INVALID_REGISTER;
+				error_code = NOT_IN_REGISTERS_RANGE;
 			}
 		}
 		else {
@@ -213,11 +215,11 @@ bool is_valid_operand (char *operand){
 
 /* ---------------------------------------- */
 
-void remove_trailing_spaces (char *word) {
+void remove_trailing_spaces (char *str) {
 	int len;
-	for(len = strlen(word) - 1; isspace(word[len]); len--) {		 
+	for(len = strlen(str) - 1; isspace(str[len]); len--) {		 
 	}
-	word[++len] = EOS;
+	str[++len] = EOS;
 	return;
 }
 
@@ -341,8 +343,8 @@ void free_memory() {
 	free_symbol_table();
 	free_entry_list();
 	free_external_list();
-	free_code_image();
-	free_data_image();
+	reset_code_image();
+	reset_data_image();
 	reset_counters_indexes();
 	return;
 }

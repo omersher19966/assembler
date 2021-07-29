@@ -15,7 +15,6 @@ entryNodePtr ent_head = NULL;
 	instruction counter, data counter, line counter */
 int ic =  MEMORY_STARTING_LOCATION, dc = 0, lc = 0;
 
-
 const command cmd[] = { 
 	{"add", 0, 1, THREE_OPERANDS,INSTRUCTION_R, ARITHMETIC_R_INSTRUCTIONS},
 	{"sun", 0, 2, THREE_OPERANDS, INSTRUCTION_R, ARITHMETIC_R_INSTRUCTIONS},
@@ -60,7 +59,10 @@ const char * directive_cmd[] = {
 
 static unsigned long get_required_bits(int bytes);
 static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp);
-
+/* Prints code image to the given file. */
+static void    print_code_image_to_file(FILE *object_file ,int icf);
+/* Prints data image to the given file. */
+static void    print_data_image_to_file(FILE *object_file ,int icf, int dcf);
 /* ---------------------------------------- */
 
 void pass(FILE *fp, char *file_name) {
@@ -112,7 +114,7 @@ void pass(FILE *fp, char *file_name) {
 
 /* ---------------------------------------- */
 
-void print_code_image_to_file(FILE *object_file ,int icf) {
+static void print_code_image_to_file(FILE *object_file ,int icf) {
 	int index, i; 
 	char *ptr;
 	instructionType type;
@@ -140,7 +142,7 @@ void print_code_image_to_file(FILE *object_file ,int icf) {
 
 /* ---------------------------------------- */
 
-void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
+static void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 
 	int index, address, address_jmp = MACHINE_INSTRUCTIONS_SIZE, bytes_to_print, available_bytes;
 	unsigned long num, temp, temp2, required_bits;
@@ -258,7 +260,7 @@ void free_external_list() {
 
 /* ---------------------------------------- */
 
-void free_code_image() {
+void reset_code_image() {
 	int i;
 	instruction empty_instruction = {0}; /* used for reseting all structures in code image.. */
 	for(i=0; i < MAX_CODE_SIZE; i++) {
@@ -268,7 +270,7 @@ void free_code_image() {
 
 /* ---------------------------------------- */
 
-void free_data_image() {
+void reset_data_image() {
 	int i;
 	directiveData empty_data = {0}; /* used for reseting all structures in data image. */
 	for(i=0; i < MAX_DATA_SIZE; i++) {
@@ -299,7 +301,7 @@ void update_data_image(int icf) {
 
 /* ---------------------------------------- */
 
-bool is_command_word(char *word){
+bool is_command(char *word){
 	command *command_ptr;
 	for(command_ptr = (command *)cmd; command_ptr->commmad_name != NULL; command_ptr++) {
 		if(are_strings_equal(command_ptr->commmad_name, word)) {
@@ -311,7 +313,7 @@ bool is_command_word(char *word){
 
 /* ---------------------------------------- */
 
-bool is_directive_word(char *word) {
+bool is_directive_command(char *word) {
 	char **ptr;
 	for(ptr = (char **)directive_cmd; *ptr != NULL; ptr++) {
 		if(are_strings_equal(*ptr, word)) {
@@ -323,13 +325,13 @@ bool is_directive_word(char *word) {
 
 /* ---------------------------------------- */
 
-bool is_entry_word(char *word) {
+bool is_entry_command(char *word) {
 	return are_strings_equal(word, ENTRY_COMMAND);
 }
 
 /* ---------------------------------------- */
 
-bool is_extern_word(char *word) {
+bool is_extern_command(char *word) {
 	return are_strings_equal(word, EXTERN_COMMAND);
 }
 
@@ -362,17 +364,11 @@ int convert_to_register(char *operand) {
 
 /* ---------------------------------------- */
 
-int add_instruction_to_code_image (instruction *instruction_ptr) {
-	int error_code = OK;
-	if (code_image_index > MAX_CODE_SIZE) {
-		error_code = CODE_IMAGE_IS_FULL;
-	}
-	else {
-		instruction_ptr->value = ic;
-		ic += MACHINE_INSTRUCTIONS_SIZE;
-		code_image[code_image_index++] = *(instruction_ptr);
-	}
-	return error_code;
+void add_instruction_to_code_image (instruction *instruction_ptr) {
+
+	instruction_ptr->value = ic;
+	ic += MACHINE_INSTRUCTIONS_SIZE;
+	code_image[code_image_index++] = *(instruction_ptr);
 }
 
 /* ---------------------------------------- */
@@ -567,10 +563,10 @@ void print_object_file(FILE *object_file, int icf, int dcf) {
 
 /* ---------------------------------------- */
 
-command *get_command(char *word) {
+command *get_command(char *name) {
 	command *command_ptr;
 	for(command_ptr=(command *)cmd; command_ptr->commmad_name !=  NULL; command_ptr++) {
-		if(!(strcmp(command_ptr->commmad_name, word))) {
+		if(!(strcmp(command_ptr->commmad_name, name))) {
 			return command_ptr;
 		}
 	}

@@ -42,7 +42,7 @@ void assembler_first_pass(FILE *fp, char* file_name) {
 				
 				error_code = OK;
 
-				if(is_directive_word(word)) {
+				if(is_directive_command(word)) {
 					if(is_label) {
 						error_code = add_symbol_to_table(label, false, true, false, false);
 					}
@@ -55,15 +55,15 @@ void assembler_first_pass(FILE *fp, char* file_name) {
 						print_error(error_code, file_name, NULL);
 					}
 				}
-				else if(is_entry_word(word)){
+				else if(is_entry_command(word)){
 					continue;
 				}
-				else if(is_extern_word(word)){
+				else if(is_extern_command(word)){
 					if (is_error(error_code = parse_extern_sentence(line))) {
 						print_error(error_code, file_name, NULL);
 					}
 				}
-				else if(is_command_word(word)) {
+				else if(is_command(word)) {
 					if(is_label) {
 						error_code = add_symbol_to_table(label, true, false, false, false);
 					}

@@ -11,11 +11,11 @@
     #define LABEL_SUFFIX ':' /* Sign for the label ending */
     #define MAX_SYMBOL_NAME_LENGTH	32 /* Max label length including label suffix ':' */
 
-/* ----------------------------- */
-/* External Declarations */
-/* ----------------------------- */
+/* -------------------------------- */
+/* External Variabels Declarations */
+/* -------------------------------- */
 
-extern int ic, dc;
+  extern int ic, dc; /* used in symbolTable to determine the symbol address */
 
 /* ----------------------------- */
 /* New Types */
@@ -58,25 +58,33 @@ extern int ic, dc;
 /* Functions  */
 /* ----------------------------- */
 
+    /* ----------- Label Functions ----------- */
 
+    /* Check if the label is valid. return an error code in case error occured */
     int					check_label(char *word, bool check_new_label, bool check_symbol_tabel);
+    /* Check if a given label is a valid label. return an error code in case error occured */
     int    	  	check_valid_label(char *word);
-
+    
+    /* Return TRUE if label is terminates with colon, FALSE otherwise */
     bool				is_new_label(char *word);
 
 
-    /* Symbols functions */
-
-    bool    		is_symbol_exist(char *symbol_name);
-
-    symbolPtr   get_symbol_from_table(char *symbol_name);
-    symbolPtr   create_new_symbol(char *, bool code, bool data, bool entry, bool external);
-
-    int   			add_symbol(char *, bool code, bool data);
-
-    int   		add_symbol_to_table(char *, bool code, bool data, bool entry, bool external);
+    /* ----------- Symbols Functions ----------- */
+    
+    /* Update all data symbols with the final icf value.*/
     void    		update_symbol_table(int icf);
+    /* Relase the memory allocation of all symbol in the symbol table.*/
     void    		free_symbol_table();
 
+    /* Adds a given label data as a symbol to the symbol table , return appropiate error code in case error occured.*/
+    int   		  add_symbol_to_table(char *, bool code, bool data, bool entry, bool external);
+    
+    /* Return TRUE if given symbol name exists in the symbol table, FALSE otherwise */
+    bool    		is_symbol_exist(char *symbol_name);
+
+    /* Return pointer to a symbol with the given symbol name , return NULL if the symbol doesn't exist.*/
+    symbolPtr   get_symbol_from_table(char *symbol_name);
+    /* Return pointer to a new symbol if memory allocation succeeded , return NULL otherwise.*/
+    symbolPtr   create_new_symbol(char *, bool code, bool data, bool entry, bool external);
 
 #endif

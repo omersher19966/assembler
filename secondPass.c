@@ -33,8 +33,8 @@ void assembler_second_pass(FILE *fp, char* file_name) {
 					word = get_next_element(&line, WHITE_SPACES_DELIMITERS_STR);
 				}
 				
-				if(!(is_directive_word(word) || is_extern_word(word))) {
-					if(is_entry_word(word)){
+				if(!(is_directive_command(word) || is_extern_command(word))) {
+					if(is_entry_command(word)){
 						if(is_error(error_code = parse_entry_sentence(line))) {
 							print_error(error_code, file_name, word);
 						}

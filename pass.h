@@ -220,9 +220,9 @@
     } entryNode;
 
 
-/* ----------------------------- */
-/* External Variabels */
-/* ----------------------------- */
+/* -------------------------------- */
+/* External Variabels Declarations */
+/* -------------------------------- */
 
     extern int ic, dc, lc;
     extern instruction code_image[];
@@ -236,70 +236,127 @@
 /* ----------------------------- */
 
     /* ----- Pass ----- */ 
+    
+    /* Scan the given file, parses its assembly code and then creates the program output files, 
+    print error to stdout in case error occured . */
     void    pass(FILE *fp, char *file_name);
 
-    void    print_code_image_to_file(FILE *object_file ,int icf);
-    void    print_data_image_to_file(FILE *object_file ,int icf, int dcf);
+    /* Print data image with the final icf value after the first pass. */
     void    update_data_image(int icf);
+     /* Relase the entry list allocated memory. */
     void    free_entry_list();
+     /* Relase the external list allocated memory. */
     void    free_external_list();
-    void    free_code_image();
-    void    free_data_image();
+    /* Reset code image array. */
+    void    reset_code_image();
+    /* Reset data image array. */
+    void    reset_data_image();
+    /* Reset global counters and indexes like: code and data image indexes + line, instruction and data counters . */
     void    reset_counters_indexes();
+    /* Print entry list to the entries file. */
     void    print_entry_file(FILE *entry_file);
+    /* Print external list to the externals file. */
     void    print_external_file(FILE *external_file);
+    /* Print code+data images to the object file. */
     void    print_object_file(FILE *object_file, int icf, int dcf);
+    /* Adds a given instruction to the code image. */
+    void    add_instruction_to_code_image (instruction *instruction_ptr);
 
+    /* Check for line errors in the given line, return an appropiate error code in case error was detected.*/
     int     check_line(char *line);
+    /* Check if the given line has the same operands number as the given given required operands, 
+    return an appropiate error code in case error was detected.*/
     int     check_operands_num(char *line ,reqOperands num);
+    /* Convert a given register operand to register number and return it. */
     int     convert_to_register(char *operand);
-    int     add_instruction_to_code_image (instruction *instruction_ptr);
+    /* Add a new data to the program data image if it's not full, return error code in case data image is full*/
     int     add_to_data_image(long num, int jmp);
+    /* Set a given operands list array with operands from the given line, 
+    return an appropiate error code in case error occured */
     int     set_operands_list(char *line, char **operands_list, reqOperands operands_num);
+    /* Create program's output files (object, ent, ext), return an appropiate error code in case error occured */
     int     create_output_files(char *file_name, int icf, int dcf);
 
-
-    bool    is_command_word(char *);
-    bool    is_directive_word(char *);
-    bool    is_entry_word(char *word);
-    bool    is_extern_word(char *word);
+    /* Return TRUE if the given word is an assembly command, FALSE otherwise */
+    bool    is_command(char *);
+    /* Return TRUE if the given word is an assembly directive command, FALSE otherwise */
+    bool    is_directive_command(char *);
+    /* Return TRUE if the given word is an entry command, FALSE otherwise */
+    bool    is_entry_command(char *word);
+    /* Return TRUE if the given word is an entry command, FALSE otherwise */
+    bool    is_extern_command(char *word);
+    /* Return TRUE if the entry list is not empty, FALSE otherwise */
     bool    is_entry_list();
+    /* Return TRUE if the external list is not empty, FALSE otherwise */
     bool    is_external_list();
+    /* Return TRUE if the given line is a valid operands line (last char is not a comma), FALSE otherwise */
     bool    is_valid_operands_line(char *line);
-    bool    is_valid_asciz_line(char *line); /* checks if there is one operand in line; */
-
-    command * get_command(char *word);
+    
+    /* Searche for an assembly command with the same name as the given given namem, 
+    return a pointer to the command if it finds it, NULL otherwise */
+    command * get_command(char *name);
 
     /* ----- First pass ----- */ 
     
+    /* Scans and Parses the given assembly file for the first time, Stored the data in the right structures 
+    which are used after for the output files, print error to stdout in case error occured. */
     void    assembler_first_pass(FILE *fp, char *file_name);
     
+    /* Set binary machine insturction for arithmetic R instructions group, Store the instruction in the code image */
     void    set_arithmetic_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
+    /* Set binary machine insturction for copy R instructions group, Store the instruction in the code image */
     void    set_copy_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
+    /* Set binary machine insturction for arithmetic I instructions group, Store the instruction in the code image */
     void    set_arithmetic_i_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register, int immed);
+    /* Set binary machine insturction for loading & storing I instructions group, 
+    Store the instruction in the code image */
     void    set_loading_storing_i_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register, int immed);
+    /* Set binary machine insturction for branching I instructions group, Store the instruction in the code image */
     void    set_branching_i_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
+    /* Set binary machine insturction for jmp instruction, Store the instruction in the code image */
     void    set_jmp_instruction(instruction *instruction_ptr, command *command_ptr, int reg ,bool reg_flag);
+    /* Set binary machine insturction for la instruction, Store the instruction in the code image */
     void    set_la_instruction(instruction *instruction_ptr, command *command_ptr);
+    /* Set binary machine insturction for call instruction, Store the instruction in the code image */
     void    set_call_instruction(instruction *instruction_ptr, command *command_ptr);
+    /* Set binary machine insturction for stop instruction, Store the instruction in the code image */
     void    set_stop_instruction(instruction *instruction_ptr, command *command_ptr);
 
-
+    /* Parse extern commands, store the given label in the symbol tabel with the correct attributes.
+    return error code in case error occured */
     int     parse_extern_sentence(char *line);
-    int     parse_directive_sentence(char *line, char *word); /* need more work. */
+    /* Parses directive commands, stores the given operands in the data image.
+    return error code in case error occured */
+    int     parse_directive_sentence(char *line, char *word);
+    /* Parses instructions commands, stores the given operands in the right program structures.
+    return error code in case error occured */
     int     parse_command_sentence(char *line, char *word);
+    /* Parses R instructions type, creates binary machine instruction and then adds it to the code image.
+    return error code in case error occured */
     int     parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
+    /* Parses I instructions type, creates binary machine instruction and then adds it to the code image.
+    return error code in case error occured */
     int     parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
+    /* Parses J instructions type, creates binary machine instruction and then adds it to the code image.
+    return error code in case error occured */
     int     parse_j_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
+    /* Parses given asciz commands line, stores the given ascis operand in the data image.
+    return error code in case error occured */
     int     parse_asciz_command(char *line);
 
     /* ----- Second Pass ----- */ 
     
+    /* Scans and Parses the given assembly file for the Second time, Complete full code and data images which 
+    are used after for the output files, print error to stdout in case error occured. */
     void    assembler_second_pass(FILE *fp, char *file_name);
-
+    /* Parses entry commands, stores the given label in the symbol tabel with the correct attributes.
+    return error code in case error occured */
     int     parse_entry_sentence(char *line);
+    /* Complete the comannd's data in the code image if it's needed, return error code in case error occured */
     int     complete_command_data(char *line, char *word);
+    /* Add the given symbol to the external list with the given addrress, return error code in case error occured */
     int     add_symbol_to_external_list(symbolPtr symbol, int command_address);
+    /* Add the given symbol to the entry list, return error code in case error occured */
     int     add_symbol_to_entry_list(symbolPtr symbol);
 
 #endif
