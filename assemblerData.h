@@ -18,7 +18,8 @@
     #define OBJECT_FILE_EXT	".ob"
     #define ENTRY_FILE_EXT ".ent"
     #define EXTERN_FILE_EXT ".ext"
-
+    #define EXTENSION_SIZE 20 /* extension characters size for the output file */
+    
     /* Maximun prgoram values */
     #define MAX_LINE 80
     #define MAX_FILES 3 /* ???? */
@@ -73,6 +74,7 @@
 /* ----------------------------- */
 /* Functions */
 /* ----------------------------- */
+    
     /* Print an appropiate error message based on the given error code and then raises the global error flag.*/
     void    print_error(int error_code,char *file_name, char *word);
     /* Remove trailing space characters from the given string. */
@@ -98,7 +100,7 @@
     /* Return TRUE if the given line is an empty line, FALSE otherwise */
     bool    is_empty_line(char *line);
     /* Return TRUE if the given path has a valid assembly extension ".as", FALSE otherwise */
-    bool    is_valid_assembly_extension(char *path);
+    bool    is_valid_assembly_extension(char *file_name);
     /* Return TRUE if the given word is a save assembly keyword, FALSE otherwise */
     bool    is_assembly_keyword(char *word);
     /* Return TRUE if the line is a comment line based on the first given word in the line, FALSE otherwise */

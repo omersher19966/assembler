@@ -43,7 +43,7 @@
 
 
     /* Label/Symbol Error Codes 30 - 40 */ 
-    
+
     #define VALID_LABEL 30 
     #define NOT_A_LABEL 31 
     #define INVALID_LABEL 32 
@@ -51,7 +51,6 @@
     #define LABEL_IS_ASSEMBLY_KEYWORD 34 
     #define LABEL_HAS_ALREADY_BEEN_USED 35 
     #define SYMBOL_IS_NOT_DEFINED 36 
-    #define SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY 37
-    #define SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL 38
+    #define SYMBOL_CANNOT_BE_DEFINED_AS_ENTRY_AND_EXTERNAL 37
 
 #endif

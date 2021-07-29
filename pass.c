@@ -480,9 +480,9 @@ int create_output_files(char *file_name, int icf, int dcf) {
 	FILE *object_file, *external_file, *entry_file;
 	bool is_entry_file_needed = is_entry_list(), is_external_file_needed = is_external_list();
 
-	object_file_name = (char *)calloc(strlen((file_name) + strlen(OBJECT_FILE_EXT)), sizeof(char));
-	external_file_name = (char *)calloc((strlen(file_name) + strlen(EXTERN_FILE_EXT)), sizeof(char));
-	entry_file_name = (char *)calloc((strlen(file_name) + strlen(EXTERN_FILE_EXT)), sizeof(char));
+	object_file_name = (char *)malloc(strlen((file_name)) + EXTENSION_SIZE *sizeof(char));
+	external_file_name = (char *)malloc(strlen((file_name)) +EXTENSION_SIZE * sizeof(char));
+	entry_file_name = (char *)malloc(strlen((file_name)) + EXTENSION_SIZE *sizeof(char));
 
 	if(object_file_name == NULL || external_file_name == NULL || entry_file_name == NULL) {
 		error_code = MEMORY_ALLOCATION_FAILED;
@@ -490,9 +490,9 @@ int create_output_files(char *file_name, int icf, int dcf) {
 	else{
 
 			strcpy(object_file_name, file_name);
-    		strcat(object_file_name,OBJECT_FILE_EXT);
+    		strcat(object_file_name, OBJECT_FILE_EXT);
 			strcpy(entry_file_name, file_name);
-    		strcat(entry_file_name,ENTRY_FILE_EXT);
+    		strcat(entry_file_name, ENTRY_FILE_EXT);
 			strcpy(external_file_name, file_name);
     		strcat(external_file_name,EXTERN_FILE_EXT);
  
@@ -523,6 +523,12 @@ int create_output_files(char *file_name, int icf, int dcf) {
 					fclose(external_file);
 				}
 			}
+			
+			free(object_file_name);
+			free(external_file_name);
+			free(entry_file_name);
+
+
 	}
 	
 	return error_code;

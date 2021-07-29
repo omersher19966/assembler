@@ -1,7 +1,8 @@
-
+MAIN: add $3, , $9
+.entry Next
 .entry Next
 .extern wNumber
-
+.extern wNumber
 STR: .asciz "aBcd"
 MAIN: add $3, $5, $9
 LOOP: ori $9, -5, $2
@@ -15,6 +16,7 @@ sw $0, 4, $10
 bne $31, $9, LOOP
 call val1
 jmp $4
+.entry Next
 la wNumber
 .extern val1
 .dh 27056

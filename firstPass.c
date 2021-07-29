@@ -106,7 +106,7 @@ int parse_extern_sentence(char *line) {
 			}
 			else {
 				if ((symbol->attributes.entry == true)) {
-					error_code = SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_ENTRY;
+					error_code = SYMBOL_CANNOT_BE_DEFINED_AS_ENTRY_AND_EXTERNAL;
 				}
 			}
 		}

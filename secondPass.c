@@ -67,7 +67,7 @@ int parse_entry_sentence(char *line) {
 		if(!is_error(error_code = check_label(operand, false, false))) {
 			if((symbol = get_symbol_from_table(operand)) != NULL) {
 				if(symbol->attributes.external) {
-					error_code = SYMBOL_HAS_ALREADY_BEEN_DEFINED_AS_EXTERNAL;
+					error_code = SYMBOL_CANNOT_BE_DEFINED_AS_ENTRY_AND_EXTERNAL;
 				}
 				else {
 					symbol->attributes.entry = true;
@@ -183,10 +183,12 @@ int add_symbol_to_entry_list(symbolPtr symbol) {
 		}
 		else {
 			current_ent_node_ptr = ent_head;
-			while(current_ent_node_ptr->next != NULL) {
+			while((!are_strings_equal(new_ent_node_ptr->symbol_name,current_ent_node_ptr->symbol_name)) && (current_ent_node_ptr->next != NULL)) {
 				current_ent_node_ptr = current_ent_node_ptr -> next;
 			}
-			current_ent_node_ptr->next = new_ent_node_ptr;
+			if((!are_strings_equal(new_ent_node_ptr->symbol_name,current_ent_node_ptr->symbol_name)) && (current_ent_node_ptr->next == NULL)){
+				current_ent_node_ptr->next = new_ent_node_ptr;
+			}
 		}
 	}
 	else {
