@@ -359,7 +359,7 @@ bool is_valid_operands_line(char *line) {
 /* ---------------------------------------- */
 
 int convert_to_register(char *operand) {
-	return atoi(++operand);/*increasing operand for skipping the reg sing - $ */
+	return atoi(++operand); /* increasing operand by 1 for skipping the register sign - $ */
 }
 
 /* ---------------------------------------- */

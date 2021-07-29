@@ -10,12 +10,14 @@
 
     #define OK 0
     
-    /* Memory Errors */
+    /* Memory Errors 1 - 10*/
+
     #define MEMORY_ALLOCATION_FAILED 1 
     #define DATA_IMAGE_IS_FULL 2 
     #define CODE_IMAGE_IS_FULL 3 
   
     /* Assembler Errors */
+
     #define INVALID_EXTENSION 4
     #define INVALID_NUMBER 5 
     #define INVALID_STRING 6 
@@ -23,7 +25,8 @@
     #define INVALID_REGISTER 8 
     #define NOT_IN_REGISTERS_RANGE 9
 
-    /* Pass Errors */
+    /* Pass Errors 10 - 30 */
+
     #define ABOVE_MAX_LINE 10  
     #define COMMENT_LINE 11 
     #define EMPTY_LINE 12 
@@ -39,7 +42,8 @@
     #define CANNOT_CREATE_OR_WRITE_TO_OBJECT_FILE 24 
 
 
-    /* Label/Symbol Error Codes */ 
+    /* Label/Symbol Error Codes 30 - 40 */ 
+    
     #define VALID_LABEL 30 
     #define NOT_A_LABEL 31 
     #define INVALID_LABEL 32 
