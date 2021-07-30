@@ -442,7 +442,7 @@ int check_line(char *line) {
 		else if (!is_valid_operands_line(line)) {
 			error_code=  INVALID_OPERANDS_LINE;
 		}
-		else if(is_comment(element)) {
+		else if(is_comment_line(element)) {
 			error_code = COMMENT_LINE;
 		}
 	}

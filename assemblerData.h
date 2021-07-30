@@ -19,7 +19,7 @@
     #define ENTRY_FILE_EXT ".ent"
     #define EXTERN_FILE_EXT ".ext"
     #define EXTENSION_SIZE 20 /* extension characters size for the output file */
-    
+
     /* Maximun prgoram values */
     #define MAX_LINE 80
     #define MAX_FILES 3 /* ???? */
@@ -45,7 +45,7 @@
     /* Useful Characters Macros */
     #define COMMENT_CHAR ';'
     #define COMMA_DELIMETER_CHAR ','
-    #define QUTATION_MARK_CHAR '\"'
+    #define QUOTATION_MARK_CHAR '\"'
     
     /* Line delimeters for get_next_element function*/
     #define COMMA_DELIMETER_STR "," /* used for finding the next operand */
@@ -104,7 +104,7 @@
     /* Return TRUE if the given word is a save assembly keyword, FALSE otherwise */
     bool    is_assembly_keyword(char *word);
     /* Return TRUE if the line is a comment line based on the first given word in the line, FALSE otherwise */
-    bool    is_comment(char *word);
+    bool    is_comment_line(char *word);
     /* Return TRUE if error was detected , FALSE otherwise */
     bool    is_error(int error_code);
     
