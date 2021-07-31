@@ -1,4 +1,4 @@
-#include "assemblerData.h"
+#include "../include/assemblerData.h"
 
 #ifndef SYMBOL_H
     

@@ -6,9 +6,9 @@
 
 /* Because the File is so general all program header files are included here.*/
 
-#include "assemblerData.h"
-#include "pass.h"
-#include "symbol.h"
+#include "../include/assemblerData.h"
+#include "../include/pass.h"
+#include "../include/symbol.h"
 
 /* Assembly Keywords Table */
 const char *assembly_keywords[] = {

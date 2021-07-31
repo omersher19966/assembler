@@ -6,7 +6,7 @@
 
 */
 
-#include "symbol.h" /* includes all macros and decelrations used in the symbolTable.c file */
+#include "../include/symbol.h" /* includes all macros and decelrations used in the symbolTable.c file */
 
 /* ------ Symbol Table Root Node ------ */
 

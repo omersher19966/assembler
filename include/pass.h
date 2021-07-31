@@ -1,5 +1,5 @@
-#include "assemblerData.h"
-#include "symbol.h"
+#include "../include/assemblerData.h"
+#include "../include/symbol.h"
 
 #ifndef PASS_H
 

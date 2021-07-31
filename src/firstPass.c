@@ -1,10 +1,10 @@
-#include "pass.h"
+#include "../include/pass.h"
 
 /* ---------------------------------------- */
 
 void assembler_first_pass(FILE *fp, char* file_name) {
 	
-	char *word = NULL, *label = NULL, *allocated_line = (char *) malloc(sizeof(char) * MAX_LINE), *line; /* need to handle malloc */
+	char *word = NULL, *label = NULL, *allocated_line = (char *)malloc(MAX_LINE * sizeof(char)), *line; /* need to handle malloc */
 	bool is_label;
 	int error_code = OK;
 	

@@ -1,5 +1,5 @@
-#include "assemblerData.h"
-#include "pass.h"
+#include "../include/assemblerData.h"
+#include "../include/pass.h"
 
 /* Code + Data Image Setup */
 instruction code_image[MAX_CODE_SIZE];
