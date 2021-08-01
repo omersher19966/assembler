@@ -191,7 +191,7 @@
 
     typedef struct externalNode {
         int address;
-        char *symbol_name;
+        char symbol_name[MAX_SYMBOL_NAME_LENGTH];
         externalNodePtr next;
     } externalNode;
 
@@ -215,7 +215,7 @@
 
     typedef struct entryNode {
         int address;
-        char *symbol_name;
+        char symbol_name[MAX_SYMBOL_NAME_LENGTH];
         entryNodePtr next;
     } entryNode;
 
@@ -358,6 +358,8 @@
     int     add_symbol_to_external_list(symbolPtr symbol, int command_address);
     /* Add the given symbol to the entry list, return error code in case error occured */
     int     add_symbol_to_entry_list(symbolPtr symbol);
+
+    bool    is_symbol_in_entry_list(char *symbol_name);
 
 #endif
 
