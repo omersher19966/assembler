@@ -70,7 +70,7 @@
 /* -------------------------------- */
 
     extern bool global_error_flag, global_memory_flag; /* global error flags used to detect if error was detected. */
-
+    extern int lc;
 /* ----------------------------- */
 /* Functions */
 /* ----------------------------- */
@@ -81,8 +81,6 @@
     void    remove_trailing_spaces (char *str);
     /* Move forward to the next line in the file pointed by the given file pointer (fp).*/
     void    start_new_line(FILE *fp);
-    /* Relase all allocated program memory.*/
-    void    free_memory();
     /* Remove assembly file extension ".as" from the given file name*/
     void    remove_file_extension(char *file_name);
     

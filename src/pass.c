@@ -282,6 +282,25 @@ static void print_the_rest(FILE *object_file, int available_bytes, int address, 
 		fprintf(object_file, " %02X", *ptr++);
 	}
 }
+
+/* ------------------------------------------
+Function: free_pass_memory()
+	Relase all allocated dynamic memory used in the current file parsing like: symbol table, entry and external list and etc.
+	In addition reset all code + data images, counter and indexes for the next file parsing.
+------------------------------------------- */
+
+void free_pass_memory() {
+	free_symbol_table();
+	free_entry_list();
+	free_external_list();
+	/* because code image and data image are program arrays 
+	and are not dynamic memmory allocted, only reset is required */
+	reset_code_image(); 
+	reset_data_image();
+	reset_counters_indexes();
+	return;
+}
+
 /* ------------------------------------------
 Function: free_entry_list().
 	Relase all the allocated memory in the entry list.

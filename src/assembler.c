@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 			global_memory_flag = false;
 
 			pass(fp, file_name); /* parsing the file */
-			free_memory(); /* free all allocated memory */
+			free_pass_memory(); /* free all allocated memory used in pass function*/
 			fclose(fp);	/* close the current file */
 		}
 	}

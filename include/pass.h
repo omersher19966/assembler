@@ -243,7 +243,9 @@
 
     /* Print data image with the final icf value after the first pass. */
     void    update_data_image(int icf);
-     /* Relase the entry list allocated memory. */
+    /* Relase all allocated memory for the file parsing.*/
+    void    free_pass_memory();
+    /* Relase the entry list allocated memory. */
     void    free_entry_list();
      /* Relase the external list allocated memory. */
     void    free_external_list();
