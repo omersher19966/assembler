@@ -287,9 +287,9 @@ static unsigned long get_required_bits(int bytes) {
 /* used by print_to_data_image only */
 /* Print last line just in case last line is not full in data and the regular method can not handle it */  
 static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp) {
-	char *ptr;
+	unsigned char *ptr;
 	fprintf(object_file, "%04d", address);
-	for(ptr = (char *) &temp; available_bytes != EMPTY; available_bytes--) {
+	for(ptr = (unsigned char *) &temp; available_bytes != EMPTY; available_bytes--) {
 		fprintf(object_file, " %02X", *ptr++);
 	}
 }
