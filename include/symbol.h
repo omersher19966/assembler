@@ -60,9 +60,9 @@
 
     /* ----------- Label Functions ----------- */
 
-    /* Check if the label is valid. return an error code in case error occured */
+    /* Check if the label is valid. return an error code in case error was detected. */
     int					check_label(char *word, bool check_new_label, bool check_symbol_tabel);
-    /* Check if a given label is a valid label. return an error code in case error occured */
+    /* Check if a given label is a valid label. return an error code in case error was detected. */
     int    	  	check_valid_label(char *word);
     
     /* Return TRUE if label is terminates with colon, FALSE otherwise */
@@ -76,7 +76,7 @@
     /* Relase the memory allocation of all symbol in the symbol table.*/
     void    		free_symbol_table();
 
-    /* Adds a given label data as a symbol to the symbol table , return appropiate error code in case error occured.*/
+    /* Adds a given label data as a symbol to the symbol table , return appropiate error code in case error was detected..*/
     int   		  add_symbol_to_table(char *, bool code, bool data, bool entry, bool external);
     
     /* Return TRUE if given symbol name exists in the symbol table, FALSE otherwise */

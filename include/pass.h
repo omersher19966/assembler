@@ -238,7 +238,7 @@
     /* ----- Pass ----- */ 
     
     /* Scan the given file, parses its assembly code and then creates the program output files, 
-    print error to stdout in case error occured . */
+    print error to stdout in case error was detected. . */
     void    pass(FILE *fp, char *file_name);
 
     /* Print data image with the final icf value after the first pass. */
@@ -272,9 +272,9 @@
     /* Add a new data to the program data image if it's not full, return error code in case data image is full*/
     int     add_to_data_image(long num, int jmp);
     /* Set a given operands list array with operands from the given line, 
-    return an appropiate error code in case error occured */
+    return an appropiate error code in case error was detected. */
     int     set_operands_list(char *line, char **operands_list, reqOperands operands_num);
-    /* Create program's output files (object, ent, ext), return an appropiate error code in case error occured */
+    /* Create program's output files (object, ent, ext), return an appropiate error code in case error was detected. */
     int     create_output_files(char *file_name, int icf, int dcf);
 
     /* Return TRUE if the given word is an assembly command, FALSE otherwise */
@@ -299,64 +299,64 @@
     /* ----- First pass ----- */ 
     
     /* Scans and Parses the given assembly file for the first time, Stored the data in the right structures 
-    which are used after for the output files, print error to stdout in case error occured. */
+    which are used after for the output files, print error to stdout in case error was detected.. */
     void    assembler_first_pass(FILE *fp, char *file_name);
     
-    /* Set binary machine insturction for arithmetic R instructions group, Store the instruction in the code image */
+    /* Set binary machine insturction for arithmetic R instructions group */
     void    set_arithmetic_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
-    /* Set binary machine insturction for copy R instructions group, Store the instruction in the code image */
+    /* Set binary machine insturction for copy R instructions group */
     void    set_copy_r_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
-    /* Set binary machine insturction for arithmetic I instructions group, Store the instruction in the code image */
+    /* Set binary machine insturction for arithmetic I instructions group */
     void    set_arithmetic_i_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register, int immed);
     /* Set binary machine insturction for loading & storing I instructions group, 
     Store the instruction in the code image */
     void    set_loading_storing_i_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register, int immed);
-    /* Set binary machine insturction for branching I instructions group, Store the instruction in the code image */
+    /* Set binary machine insturction for branching I instructions group */
     void    set_branching_i_instruction(instruction *instruction_ptr, command *command_ptr, int *current_register);
-    /* Set binary machine insturction for jmp instruction, Store the instruction in the code image */
+    /* Set binary machine insturction for jmp instruction */
     void    set_jmp_instruction(instruction *instruction_ptr, command *command_ptr, int reg ,bool reg_flag);
-    /* Set binary machine insturction for la instruction, Store the instruction in the code image */
+    /* Set binary machine insturction for la instruction */
     void    set_la_instruction(instruction *instruction_ptr, command *command_ptr);
-    /* Set binary machine insturction for call instruction, Store the instruction in the code image */
+    /* Set binary machine insturction for call instruction */
     void    set_call_instruction(instruction *instruction_ptr, command *command_ptr);
-    /* Set binary machine insturction for stop instruction, Store the instruction in the code image */
+    /* Set binary machine insturction for stop instruction */
     void    set_stop_instruction(instruction *instruction_ptr, command *command_ptr);
 
     /* Parse extern commands, store the given label in the symbol tabel with the correct attributes.
-    return error code in case error occured */
+    return error code in case error was detected. */
     int     parse_extern_sentence(char *line);
     /* Parses directive commands, stores the given operands in the data image.
-    return error code in case error occured */
+    return error code in case error was detected. */
     int     parse_directive_sentence(char *line, char *word);
     /* Parses instructions commands, stores the given operands in the right program structures.
-    return error code in case error occured */
-    int     parse_command_sentence(char *line, char *word);
+    return error code in case error was detected. */
+    int     parse_command_sentence(char *line, char *cmd_name);
     /* Parses R instructions type, creates binary machine instruction and then adds it to the code image.
-    return error code in case error occured */
+    return error code in case error was detected. */
     int     parse_r_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
     /* Parses I instructions type, creates binary machine instruction and then adds it to the code image.
-    return error code in case error occured */
+    return error code in case error was detected. */
     int     parse_i_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
     /* Parses J instructions type, creates binary machine instruction and then adds it to the code image.
-    return error code in case error occured */
+    return error code in case error was detected. */
     int     parse_j_instruction(instruction *instruction_ptr,command *command_ptr, char *line, reqOperands operands_num);
-    /* Parses given asciz commands line, stores the given ascis operand in the data image.
-    return error code in case error occured */
+    /* Parses given asciz command line, stores the given ascis operand in the data image.
+    return error code in case error was detected. */
     int     parse_asciz_command(char *line);
 
     /* ----- Second Pass ----- */ 
     
     /* Scans and Parses the given assembly file for the Second time, Complete full code and data images which 
-    are used after for the output files, print error to stdout in case error occured. */
+    are used after for the output files, print error to stdout in case error was detected.. */
     void    assembler_second_pass(FILE *fp, char *file_name);
     /* Parses entry commands, stores the given label in the symbol tabel with the correct attributes.
-    return error code in case error occured */
+    return error code in case error was detected. */
     int     parse_entry_sentence(char *line);
-    /* Complete the comannd's data in the code image if it's needed, return error code in case error occured */
+    /* Complete the comannd's data in the code image if it's needed, return error code in case error was detected. */
     int     complete_command_data(char *line, char *word);
-    /* Add the given symbol to the external list with the given addrress, return error code in case error occured */
+    /* Add the given symbol to the external list with the given addrress, return error code in case error was detected. */
     int     add_symbol_to_external_list(symbolPtr symbol, int command_address);
-    /* Add the given symbol to the entry list, return error code in case error occured */
+    /* Add the given symbol to the entry list, return error code in case error was detected. */
     int     add_symbol_to_entry_list(symbolPtr symbol);
 
     bool    is_symbol_in_entry_list(char *symbol_name);

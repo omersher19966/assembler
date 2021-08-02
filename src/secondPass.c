@@ -1,3 +1,11 @@
+/* 
+	The file is responsible to do all second pass tasks and contains all required functions to do it.
+	The main function here is the assembler_second_pass() function which is responsible for the second file scanning
+	line by line and uses all other functions here to do it. The function also uses program general functions
+	which are not defined here but necessary here.
+
+*/
+
 #include "../include/pass.h"
 
 /* ------------------------------------------
@@ -77,7 +85,7 @@ Function: parse_entry_sentence()
 Params:
 	line - the rest of the entry command sentence to parse.
 Return:
-	OK if the entry sentence is valid, a related error code if error occured.
+	OK if the entry sentence is valid, a related error code if error was detected..
 ------------------------------------------- */
 
 int parse_entry_sentence(char *line) {
@@ -118,7 +126,7 @@ Params:
 	line - the rest of the command sentence to parse.
 	word - the command's name.
 Return:
-	OK if the the function terminated successfully, a related error code if error occured.
+	OK if the the function terminated successfully, a related error code if error was detected..
 ------------------------------------------- */
 
 
@@ -137,7 +145,7 @@ int complete_command_data(char *line, char *word) {
 
 		if(instruction_group == BRANCHING_I_INSTRUCTIONS) {
 			if((symbol = get_symbol_from_table(operands_list[THIRD_OPERAND]))) {
-				if(!(symbol->attributes.external)) {
+				if(!(symbol->attributes.external)) { /* external symbols can not be used in branching command */
 					code_image[code_image_index].instruction_fmt.instruction_i.immed = symbol->value - code_image[code_image_index].instruction_fmt.instruction_i.immed;
 				}
 				else {
@@ -179,7 +187,7 @@ Function: add_symbol_to_external_list()
 Params:
 	symbil - the given symbol used to make the a new external record.
 Return:
-	OK if the addition succceeded or a related error code if error occured.
+	OK if the addition succceeded or a related error code if error was detected..
 ------------------------------------------- */
 
 int add_symbol_to_external_list(symbolPtr symbol, int address) {
@@ -216,7 +224,7 @@ Function: add_symbol_to_entry_list()
 Params:
 	symbil - the given symbol used to make a new entry record.
 Return:
-	OK if the addition succceeded or a related error code if error occured.
+	OK if the addition succceeded or a related error code if error was detected..
 ------------------------------------------- */
 
 int add_symbol_to_entry_list(symbolPtr symbol) {

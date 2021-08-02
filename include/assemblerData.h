@@ -69,7 +69,7 @@
 /* External Variabels Declarations */
 /* -------------------------------- */
 
-    extern bool global_error_flag, global_memory_flag; /* global error flags used to detect if error occured */
+    extern bool global_error_flag, global_memory_flag; /* global error flags used to detect if error was detected. */
 
 /* ----------------------------- */
 /* Functions */
