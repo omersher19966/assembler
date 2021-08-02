@@ -4,11 +4,9 @@
 	most of the file are here.
 */
 
-/* Because the File is so general all program header files are included here.*/
-
+/* Include Files */
 #include "../include/assemblerData.h"
 #include "../include/pass.h"
-#include "../include/symbol.h"
 
 /* Assembly Keywords Table */
 const char *assembly_keywords[] = {
@@ -97,7 +95,7 @@ void print_error(int error_code, char *file_name, char *word) {
 			break;
 		/* others */
 		case ABOVE_MAX_LINE:
-			printf("Error: line %d - the length of line is above max(%d).\n", lc, MAX_LINE);
+			printf("Error: line %d - the length of the line is above max value - %d.\n", lc, MAX_LINE);
 			break;
 		case NO_GIVEN_OPERANDS:
 			printf("Error: line %d - operands were not given for the command.\n", lc);

@@ -259,7 +259,7 @@ int add_symbol_to_entry_list(symbolPtr symbol) {
 
 /* ------------------------------------------
 Function: is_symbol_in_entry_list()
-	Check if  symbol is already in the entry list by checking the given symbol name
+	Check if symbol is already in the entry list by checking the given symbol name
 	with all other symbols names in the entry list.
 Params:
 	symbol_name - the given symbol name.

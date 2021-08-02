@@ -1,3 +1,4 @@
+;sdfkjsald;j;lsad l;jsdal;jsdla;jfl;dskflk;ajsdl;jsal;dflasjdfljaasdasdfsadfadsfadsf
 .entry Next
 .extern wNumber
 .entry Next
@@ -23,5 +24,3 @@ la wNumber
 K: .dw 31,-12
 END: stop
 .entry K
-
-
