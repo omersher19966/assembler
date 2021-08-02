@@ -71,10 +71,10 @@ const char * directive_cmd[] = {
 /* Declarations of Static Functions - 
    Used only in this file */
 
-/* Get a number which used to reset all bit except of the 
+/* Get the a number which is used to reset all bits except of the 
 required bits which is base on the given bytes number */
 static unsigned long get_required_bits(int bytes);
-/* Print the last line in the object file */
+/* Print the last line in the object file in case it's needed */
 static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp);
 /* Print code image to the given file. */
 static void    print_code_image_to_file(FILE *object_file);
@@ -162,7 +162,7 @@ Params:
 
 static void print_code_image_to_file(FILE *object_file) {
 	int index, i; 
-	char *ptr;
+	unsigned char *ptr; /* char can be treated as one byte size, used to go over the data byte after byte */
 	instructionType type;
 
 	for(index = 0; index < code_image_index; index++) {
@@ -170,15 +170,16 @@ static void print_code_image_to_file(FILE *object_file) {
 		type = code_image[index].type;
 		/* type is used to determine which instruction format is used in the instruction structure */
 		if(type == INSTRUCTION_R) {
-			ptr = (char *) &code_image[index].instruction_fmt.instruction_r;
+			ptr = (unsigned char *) &code_image[index].instruction_fmt.instruction_r;
 		}
 		else if(type == INSTRUCTION_I) {
-			ptr = (char *) &code_image[index].instruction_fmt.instruction_i;
+			ptr = (unsigned char *) &code_image[index].instruction_fmt.instruction_i;
 		}
 		else {
-			ptr = (char *) &code_image[index].instruction_fmt.instruction_j;
+			ptr = (unsigned char *) &code_image[index].instruction_fmt.instruction_j;
 		}
-		/* print the machine insturcion in hex basis according the object file format */
+		/* print the machine insturcion in hex basis according the object file format byte after
+		byte increasing i each time (one byte jump)*/
 		for(i = 0; i < MACHINE_INSTRUCTIONS_SIZE; i++) {
 			fprintf(object_file, " %02X", ptr[i]);
 		}
@@ -202,7 +203,7 @@ static void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 
 	int index, address, bytes_to_print, available_bytes;
 	unsigned long num, temp, temp2, required_bits; /* use unsinged long because it is know the long is at least 32 bits */
-	char *ptr;
+	unsigned char *ptr; /* use s char pointer to go over the data byte after byte*/
 
 	available_bytes = EMPTY;
 	/* address is set to icf because it's the first address to print in the data image part */
@@ -250,8 +251,9 @@ static void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 			}
 
 		}
-		/* print the 4 bytes in hex basis according to the object file format */
-		for(ptr = (char *)&num; bytes_to_print < MACHINE_INSTRUCTIONS_SIZE; bytes_to_print++) {
+		/* print the 4 bytes in hex basis according to the object file format byte after byte
+		by increasing ptr (char *) */
+		for(ptr = (unsigned char *)&num; bytes_to_print < MACHINE_INSTRUCTIONS_SIZE; bytes_to_print++) { 
 			fprintf(object_file, " %02X", *ptr++);
 		}
 
@@ -266,6 +268,7 @@ static void print_data_image_to_file(FILE *object_file ,int icf, int dcf) {
 }
 
 /* used by print_to_data_image only */
+/* return a number which is used to reset all bits in a data except the size given in the bytes parameter */
 static unsigned long get_required_bits(int bytes) {
 	unsigned long required_bits;
 	if (bytes == 1) {
@@ -282,6 +285,7 @@ static unsigned long get_required_bits(int bytes) {
 }
 
 /* used by print_to_data_image only */
+/* Print last line just in case last line is not full in data and the regular method can not handle it */  
 static void print_the_rest(FILE *object_file, int available_bytes, int address, unsigned long temp) {
 	char *ptr;
 	fprintf(object_file, "%04d", address);
