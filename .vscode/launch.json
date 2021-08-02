@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "/home/parallels/Desktop/System Programming Lab/mmn14/my_project/bin/assembler",
-            "args": ["/home/parallels/Desktop/System Programming Lab/mmn14/my_project/files/file1.as","/home/parallels/Desktop/System Programming Lab/mmn14/my_project/files/file2.as"],
+            "args": ["/home/parallels/Desktop/System Programming Lab/mmn14/my_project/files/file3.as"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

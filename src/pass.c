@@ -113,7 +113,14 @@ void pass(FILE *fp, char *file_name) {
 		/* upadting final value of instruction and data coutners */
 		icf = ic;
 		dcf = dc;
-					
+		
+		/* check if code image or data image are empty */
+		if (icf == MEMORY_STARTING_LOCATION && dcf == EMPTY) {
+			print_error(FILE_IS_EMPTY, file_name, NULL);
+			printf("Assembler: files have not been created because of error(s).\n");
+			return;
+		}
+
 		/* setup for second pass */
 		rewind(fp);
 		update_symbol_table(icf);
@@ -698,10 +705,12 @@ int create_output_files(char *file_name, int icf, int dcf) {
 	char *entry_file_name, *external_file_name, *object_file_name;
 	FILE *object_file, *external_file, *entry_file;
 	bool is_entry_file_needed = is_entry_list(), is_external_file_needed = is_external_list();
+
 	/* Memory allocation for the files name string */
 	object_file_name = (char *)malloc(strlen((file_name)) + EXTENSION_SIZE * sizeof(char));
 	external_file_name = (char *)malloc(strlen((file_name)) +EXTENSION_SIZE * sizeof(char));
 	entry_file_name = (char *)malloc(strlen((file_name)) + EXTENSION_SIZE * sizeof(char));
+	
 	/* check if memory allocation failed */
 	if(object_file_name == NULL || external_file_name == NULL || entry_file_name == NULL) {
 		error_code = MEMORY_ALLOCATION_FAILED;

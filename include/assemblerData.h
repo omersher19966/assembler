@@ -21,8 +21,8 @@
     #define EXTENSION_SIZE 20 /* extension characters size for the output file */
 
     /* Maximun prgoram values */
-    #define MAX_LINE 80
-    #define MAX_FILES 3 /* ???? */
+    #define MAX_LINE 81 /* including EOS, meaning max characters per line is 80 */
+    #define MAX_FILES 3 
     #define MAX_LABEL_LENGTH 32 /* including ':' charcter suffix */
     #define MAX_CODE_SIZE 5000
     #define MAX_DATA_SIZE 5000

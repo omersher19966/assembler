@@ -93,17 +93,20 @@ void print_error(int error_code, char *file_name, char *word) {
 			printf("Error: line %d - the given operand is not in the valid registers range(%d-%d).\n", lc, START_REGISTER, END_REGISTER);
 			break;
 		/* others */
+		case FILE_IS_EMPTY:
+			printf("Error: file is empty.\n");
+			break;
 		case ABOVE_MAX_LINE:
-			printf("Error: line %d - the length of the line is above max value - %d.\n", lc, MAX_LINE);
+			printf("Error: line %d - the length of the line is above max value - %d.\n", lc, (MAX_LINE-1)); /* MAX_LINE - 1 means all character except EOS */
 			break;
 		case NO_GIVEN_OPERANDS:
 			printf("Error: line %d - operands were not given for the command.\n", lc);
 			break;
 		case GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED:
-			printf("Error: line %d - given operands are less than required.\n", lc);
+			printf("Error: line %d - given operands are less than required,  each operand should be saprated by a comma.\n", lc);
 			break;
 		case GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED:
-			printf("Error: line %d - given operands are more then required.\n", lc);
+			printf("Error: line %d - given operands are more then required, each operand should be saprated by a comma.\n", lc);
 			break;
 		case INVALID_OPERANDS_LINE:
 			printf("Error: line %d - line is not valid due to comma character in the end of the line.\n", lc);
