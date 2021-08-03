@@ -419,7 +419,7 @@ int parse_j_instruction(instruction *instruction_ptr,command *command_ptr, char 
 				}
 			}
 			else {
-				error_code = INVALID_OPERAND;
+				error_code = INVALID_LABEL;
 			}
 		}
 	}

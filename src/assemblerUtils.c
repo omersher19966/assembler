@@ -112,7 +112,7 @@ void print_error(int error_code, char *file_name, char *word) {
 			printf("Error: line %d - line is not valid due to comma character in the end of the line.\n", lc);
 			break;
 		case INVALID_OPERAND:
-			printf("Error: line %d - the given operand is not valid.\n", lc);
+			printf("Error: line %d - the given operand is not a valid operand.\n", lc);
 			break;
 		case OPERAND_IS_EMPTY:
 			printf("Error: line %d - empty operand in line.\n", lc);
@@ -131,7 +131,12 @@ void print_error(int error_code, char *file_name, char *word) {
 			break;
 		/* Label/Symbol Error Codes */
 		case INVALID_LABEL:
-			printf("Error: line %d - not a valid label <%s>.\n", lc, word);
+			if(word != NULL) {
+				printf("Error: line %d - not a valid label <%s>.\n", lc, word);
+			}
+			else {
+				printf("Error: line %d - the given label is not valid.\n", lc);
+			}
 			break;
 		case ABOVE_MAX_LABEL:
 			printf("Error: line %d - label is above max label length(%d).\n", lc, MAX_LABEL_LENGTH);
