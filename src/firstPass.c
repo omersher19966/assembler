@@ -142,6 +142,9 @@ int parse_extern_sentence(char *line) {
 				if ((symbol->attributes.entry == true)) { /* check if the symbol is already an entry symbol because symbol canoot be both in the same time */
 					error_code = SYMBOL_CANNOT_BE_DEFINED_AS_ENTRY_AND_EXTERNAL;
 				}
+				else if (symbol->attributes.external == false) {
+					symbol->attributes.external = true;
+				}
 			}
 		}
 	}

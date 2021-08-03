@@ -1,5 +1,5 @@
 ;----------------------------------
-;Instruction commands file
+;All Instruction commands are in the file.
 ;----------------------------------
 
 ;Start
@@ -12,6 +12,8 @@ label1: .entry reperesntmaxvalidlabellength31
 label2: .entry instruction1
 .entry instruction2
 .entry instruction3
+
+reperesntmaxvalidlabellength31: .db 1, 2, 30000
 
 ;All assembly instructions:
 
@@ -39,12 +41,12 @@ nori $9, -45, $8
 
 blt $5, $24, instruction1
 bgt $5, $24, instruction2
-blt $5, $24, instruction3
-beq $5, $24, instruction1
+beq $5, $24, instruction3
+bne $5, $24, test
 
 
 lb $7, -28, $18
-lh $7, -28, $18
+test: lh $7, -28, $18
 lw $7, -28, $18
 sb $9, 34, $2
 sh $9, 34, $2
@@ -53,9 +55,9 @@ sw $9, 34, $2
 jmp END
 END: stop
 .entry END
-reperesntmaxvalidlabellength31: .db 30000
+
 
 ; no effect for label which is defined twich as entry or external.
 ;for example:
-.extern reperesntmaxvalidlabellength31
+.entry reperesntmaxvalidlabellength31
 .extern ReperesntMaxValidLabelLength31

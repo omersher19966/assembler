@@ -1,5 +1,5 @@
 ;----------------------------------
-;Directive commands file.
+;All Directive commands are in the file.
 ;----------------------------------
 
 ;Start
