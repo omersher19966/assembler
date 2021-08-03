@@ -1,9 +1,12 @@
-
-
+Steps to run assembler program:
+	1. Create executable file in the main by running the makefile using make.
+	2. Run assembler executable file using command line and pass
+	   the assembly files as arguments.
 
 Important Notes:
 
-1. In my Assembler program, label is a word which its ending character is colon (':').
+1. In my Assembler program, label is a word which its ending character 
+is colon (':').
 words contain colon in the middel are not treated as label but as command. 
 
 for example: 
@@ -11,4 +14,3 @@ for example:
 
 ------------------------------------------
 
-------------------------------------------

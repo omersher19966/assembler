@@ -1,9 +1,12 @@
-;sdfkjsald;j;lsad l;jsdal;jsdla;jfl;dskflk;ajsdl;jsal;dflasjdfljaasdasdfsadfads
-.entry Next
-.extern wNumber
-.entry Next
+;----------------------------------
+;This is the mmn14 example program.
+;----------------------------------
+
+;file ps.as
+;sample source code
 
 .entry Next
+.extern wNumbe
 STR: .asciz "aBcd"
 MAIN: add $3, $5, $9
 LOOP: ori $9, -5, $2
