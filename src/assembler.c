@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 		/* checks assembly extnesion for each file, in case the file has valid extension, the file is added to the files[] array. */
 		for(file_index = 0 ,index = 1; index <= argc; index++) {
 			if (is_valid_assembly_extension(argv[index]) == false) {
-				printf("\nAssembler: %s has invalid extension. The file will not be parsed.\n", argv[index]);
+				printf("\nAssembler: <%s> has invalid extension. The file will not be parsed.\n", argv[index]);
 			}
 			else {
 				if((files[file_index] = fopen(argv[index], "r")) != NULL) {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 					file_index++; /* counters how many files have valid extensions */
 				}
 				else {
-					printf("\nAssembler: could not open the file - %s. The file will not be parsed.\n", argv[index]);
+					printf("\nAssembler: could not open <%s>. The file will not be parsed.\n", argv[index]);
 				}	
 			}
 		}

@@ -1,16 +1,34 @@
 Steps to run assembler program:
-	1. Create executable file in the main by running the makefile using make.
+	1. Create executable file in the main by running the makefile using make program.
+		object files are create in the obj folder.
 	2. Run assembler executable file using command line and pass
 	   the assembly files as arguments.
 
+
+Prograrm running examples:
+	Program running examples can be found in the example folder.
+	In the success folder you can find all succsseful program runnings,
+	in the failure folder all the faliure program runnings (all error messages are printed 
+	to the output file) and in the screenshots you can find all screenshot related to the program 
+	proper work.
+
+
 Important Notes:
 
-1. In my Assembler program, label is a word which its ending character 
-is colon (':').
-words contain colon in the middel are not treated as label but as command. 
+1.In my Assembler program there is not a number size validtation. meanning you can insert
+  in several commands a number greater or less than the required size number, the program knows how to handle it.
+  Basically the program will take only the required bits from the whole given number, but please notice that this
+  behavior is not a recommended one because it can lead to unexcepted result. 
 
-for example: 
-"Next:add" is treated as a command (in this case unrecogmized command will be printed).
-
+  for example: .db 257 will be stored as one(only the first eight bits will be stord)
 ------------------------------------------
 
+2.In my Assembler program, label is a word which its ending character 
+  is colon (':').
+  words contain colon in the middel are not treated as label but as command. 
+
+  for example: 
+  "Next:add" is treated as a command (in this case unrecogmized command will be printed).
+
+
+ 

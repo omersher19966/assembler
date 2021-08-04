@@ -1,0 +1,27 @@
+
+------------- firstPassFailure.as - Errors -------------
+Error: line 6 - line is not valid due to comma character in the end of line.
+Error: line 7 - the length of the line is above max value - 80.
+Error: line 10 - not a valid label <123label>.
+Error: line 11 - label is above max label length(32).
+Error: line 12 - label is assembly keyword, cannot be used.
+Error: line 14 - label <test> has already been defined in previous lines.
+Error: line 17 - the given operand is not a valid operand.
+Error: line 18 - given operands are more then required (operands are separated by comma).
+Error: line 19 - given operands are less than required (operands are separated by comma).
+Error: line 20 - operands were not given for the command.
+Error: line 21 - empty operand in line.
+Error: line 24 - the given operand is not a valid register.
+Error: line 25 - the given operand is not in the valid registers range(0-31).
+Error: line 28 - the given operand is not a valid string.
+Error: line 29 - the given operand is not a valid number.
+Error: line 32 - unrecognized command <label:add>.
+Error: line 33 - unrecognized command <test>.
+Assembler: files have not been created because of error(s).
+
+------------- secondPassFailure.as - Errors -------------
+Error: line 10 - external label cannot be used in branching command, only entry label is allowed.
+Error: line 12 - given label is not defined.
+Error: line 15 - given label cannot be defined as entry and external label.
+Error: line 19 - given operands are more then required (operands are separated by comma).
+Assembler: files have not been created because of error(s).

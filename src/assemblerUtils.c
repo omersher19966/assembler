@@ -56,7 +56,7 @@ Params:
 void print_error(int error_code, char *file_name, char *word) {
 
 	if (global_error_flag == false) {
-		printf("\n------------- %s - Errors -------------\n", file_name); /* in case is the first error in the file nice header is printed */
+		printf("------------- %s - Errors -------------\n", file_name); /* in case is the first error in the file nice header is printed */
 	}
 
 	if (error_code == MEMORY_ALLOCATION_FAILED || error_code == DATA_IMAGE_IS_FULL || error_code == CODE_IMAGE_IS_FULL) {
@@ -103,13 +103,13 @@ void print_error(int error_code, char *file_name, char *word) {
 			printf("Error: line %d - operands were not given for the command.\n", lc);
 			break;
 		case GIVEN_OPERANDS_ARE_LESS_THAN_REQUIRED:
-			printf("Error: line %d - given operands are less than required,  each operand should be saprated by a comma.\n", lc);
+			printf("Error: line %d - given operands are less than required (operands are separated by comma).\n", lc);
 			break;
 		case GIVEN_OPERANDS_ARE_MORE_THAN_REQUIRED:
-			printf("Error: line %d - given operands are more then required, each operand should be saprated by a comma.\n", lc);
+			printf("Error: line %d - given operands are more then required (operands are separated by comma).\n", lc);
 			break;
 		case INVALID_OPERANDS_LINE:
-			printf("Error: line %d - line is not valid due to comma character in the end of the line.\n", lc);
+			printf("Error: line %d - line is not valid due to comma character in the end of line.\n", lc);
 			break;
 		case INVALID_OPERAND:
 			printf("Error: line %d - the given operand is not a valid operand.\n", lc);
